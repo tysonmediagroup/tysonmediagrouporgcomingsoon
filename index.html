@@ -3,196 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon | tysonmediagroup.org</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
-    
+    <title>TYSON</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Base Reset and Full Height Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        body { 
-            background-color: #000; 
-            color: #fff;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
+        html, body {
+            width: 100%;
+            height: 100%;
             overflow: hidden; 
-            font-family: 'Cormorant Garamond', serif;
+            background-color: #000;
+            font-family: sans-serif;
+            cursor: pointer; 
         }
 
-        /* SVG CANVAS */
-        .svg-canvas {
-            width: 90vw;
-            max-width: 1400px;
-            height: auto;
-            overflow: visible;
-            transform-origin: 30.5% 53%; 
-            transition: transform 1.8s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease;
-            z-index: 2;
-        }
-
-        .zoomed {
-            transform: scale(300);
-        }
-
-        /* PHASE 1: THE TRACE */
-        .text-outline {
-            font-size: 110px;
-            font-style: italic;
-            fill: transparent;
-            stroke: rgba(255, 255, 255, 0.8);
-            stroke-width: 0.5px;
-            stroke-dasharray: 3000;
-            stroke-dashoffset: 3000;
-        }
-
-        .trace-active {
-            /* Slower trace: 4.8 seconds */
-            animation: drawTrace 4.8s linear forwards;
-        }
-
-        @keyframes drawTrace {
-            to { stroke-dashoffset: 0; }
-        }
-
-        /* PHASE 2: THE REFLECTIVE SHINE */
-        .text-fill {
-            font-size: 110px;
-            font-style: italic;
-            fill: url(#shine-gradient);
-            opacity: 0;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8)) 
-                    drop-shadow(0 0 60px rgba(255,255,255,0.4));
-        }
-
-        .glow-active {
-            opacity: 1;
-            animation: pulseGlow 1s ease-out forwards;
-        }
-
-        @keyframes pulseGlow {
-            0% { filter: drop-shadow(0 0 0px #fff); }
-            50% { filter: drop-shadow(0 0 40px #fff) drop-shadow(0 0 100px #fff); }
-            100% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.8)) drop-shadow(0 0 50px rgba(255,255,255,0.3)); }
-        }
-
-        .strip-filters {
-            filter: none !important;
-        }
-
-        /* PHASE 3: FINAL SCREEN (TEXT & ICON) */
-        .final-screen {
-            position: absolute;
+        /* Splash Screen (Image Overlay) */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background-color: #000;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 30px;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1.5s ease-out, visibility 1.5s ease-out; 
+        }
+
+        .splash-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        #splash.fade-out {
             opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Video Container */
+        #video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1; 
+            opacity: 0; 
+            transition: opacity 0.8s ease-in;
+        }
+
+        #bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        /* ULTRA-MINIMAL MUTE BUTTON */
+        .mute-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: transparent; /* No blocky background color */
+            border: none;             /* No borders */
+            color: rgba(255, 255, 255, 0.35); /* Super faint, blends into the video */
+            font-size: 20px;          /* Clean sizing */
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
             z-index: 10;
-            transition: opacity 2s ease;
+            padding: 10px;            /* Keeps hit box easy to tap but invisible */
+            outline: none;
+            user-select: none;
         }
 
-        .final-screen.fade-in {
-            opacity: 1;
+        /* Only lights up slightly on hover so it stays invisible until looked for */
+        .mute-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
         }
-
-        .coming-soon-text {
-            font-style: italic;
-            font-size: clamp(1.5rem, 4vw, 3rem);
-            letter-spacing: 4px;
-            text-align: center;
+        
+        .mute-btn:active {
+            transform: scale(0.95);
         }
-
-        /* Premium YouTube Icon Styling */
-        .yt-link {
-            color: #fff;
-            opacity: 0.6;
-            transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
-        }
-
-        .yt-link:hover {
-            opacity: 1;
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.5));
-        }
-
-        .yt-link svg {
-            width: 40px;
-            height: 40px;
-            fill: currentColor;
-        }
-
     </style>
 </head>
-<body>
+<body id="page-body">
 
-    <div class="final-screen" id="final-screen">
-        <div class="coming-soon-text">tysonmediagroup.org | Coming later this summer...</div>
-        
-        <a href="https://youtube.com/@tysonmediagroup" target="_blank" class="yt-link" aria-label="Visit TYSON Media Group on YouTube">
-            <svg viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-        </a>
+    <div id="splash">
+        <img src="photograph.jpg" alt="Intro Photograph" class="splash-image">
     </div>
 
-    <svg class="svg-canvas" id="zoom-container" viewBox="0 0 1000 200">
-        <defs>
-            <linearGradient id="shine-gradient" x1="-100%" y1="0%" x2="0%" y2="0%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
-                <stop offset="50%" stop-color="#ffffff" />
-                <stop offset="100%" stop-color="rgba(255,255,255,0.7)" />
-                <animate id="shine-anim-1" attributeName="x1" from="-100%" to="200%" dur="1.5s" begin="indefinite" fill="freeze" />
-                <animate id="shine-anim-2" attributeName="x2" from="0%" to="300%" dur="1.5s" begin="indefinite" fill="freeze" />
-            </linearGradient>
-        </defs>
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="text-outline" id="outline-text">tysonmediagroup.org</text>
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="text-fill" id="glow-text">tysonmediagroup.org</text>
-    </svg>
+    <div id="video-container">
+        <video id="bg-video" loop playsinline>
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <button id="mute-btn" class="mute-btn" aria-label="Toggle Sound">
+            <span id="mute-icon">🔊</span>
+        </button>
+    </div>
 
     <script>
-        // Updated Timeline
-        const PRE_ROLL_DELAY = 1500; 
-        const TRACE_TIME = 4800; // Slower, more deliberate draw
-        const GLOW_HOLD = 1000;
-        
-        window.onload = () => {
-            const outlineText = document.getElementById('outline-text');
-            const glowText = document.getElementById('glow-text');
-            const zoomContainer = document.getElementById('zoom-container');
-            const finalScreen = document.getElementById('final-screen');
-            
-            const shineAnim1 = document.getElementById('shine-anim-1');
-            const shineAnim2 = document.getElementById('shine-anim-2');
+        const splash = document.getElementById('splash');
+        const video = document.getElementById('bg-video');
+        const videoContainer = document.getElementById('video-container');
+        const muteBtn = document.getElementById('mute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+
+        // Body tap starts the experience
+        document.body.addEventListener('click', startExperience, { once: true }); 
+
+        function startExperience(e) {
+            // Prevent the initial full-screen click from instantly toggling the mute button if they clicked near the top right
+            if (e.target.closest('#mute-btn')) return;
+
+            splash.classList.add('fade-out');
+            video.muted = false; 
+            video.play();
 
             setTimeout(() => {
-                
-                // 1. Start Trace
-                outlineText.classList.add('trace-active');
+                videoContainer.style.opacity = 1;
+            }, 750); 
+        }
 
-                // 2. Trigger Glow & Gradient Sweep
-                setTimeout(() => {
-                    glowText.classList.add('glow-active');
-                    shineAnim1.beginElement();
-                    shineAnim2.beginElement();
-                }, TRACE_TIME);
-
-                // 3. Punch the camera through the 'o'
-                setTimeout(() => {
-                    glowText.classList.add('strip-filters');
-                    zoomContainer.classList.add('zoomed');
-                }, TRACE_TIME + GLOW_HOLD);
-
-                // 4. Fade in final text sooner (overlapping with the zoom)
-                // Triggered just 600ms after the zoom starts instead of waiting for it to finish
-                setTimeout(() => {
-                    zoomContainer.style.opacity = '0';
-                    zoomContainer.style.pointerEvents = 'none'; // Prevents invisible SVG from blocking the button click
-                    finalScreen.classList.add('fade-in');
-                }, TRACE_TIME + GLOW_HOLD + 600);
-
-            }, PRE_ROLL_DELAY);
-        };
+        // Isolated toggle button
+        muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stops click from triggering the main body logic
+            
+            if (video.muted) {
+                video.muted = false;
+                muteIcon.textContent = '🔊';
+            } else {
+                video.muted = true;
+                muteIcon.textContent = '🔇';
+            }
+        });
     </script>
 
 </body>
