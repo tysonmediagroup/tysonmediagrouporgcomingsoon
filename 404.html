@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myTYSON Profile (myTYSON) — myTYSON</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/mytyson.css">
+</head>
+<body data-mytyson-slug="">
+    <!-- Top Global Bar -->
+    <header class="mytyson-navbar">
+        <div class="mytyson-navbar-inner">
+            <a href="/" class="mytyson-brand" title="TYSON Media Group">
+                <img src="/assets/TYSONMediaGroupBanner.png" alt="TYSON Media Group">
+            </a>
+            <div class="mytyson-nav-actions">
+                <button class="mytyson-btn mytyson-btn-primary" id="mytyson-signin-btn">Sign In</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mytyson-container">
+        <!-- Profile Header Card (Cover Banner + Overlapping Avatar + Tabs) -->
+        <section class="mytyson-header-card">
+            <div class="mytyson-cover-photo"></div>
+            <div class="mytyson-header-body">
+                <div class="mytyson-identity-left">
+                    <div class="mytyson-avatar" id="profile-initials">T</div>
+                    <div class="mytyson-title-block">
+                        <div class="mytyson-name-row">
+                            <h1 class="mytyson-display-name" id="profile-name">myTYSON Profile</h1>
+                            <span class="mytyson-status-pill " id="profile-badge">myTYSON Account</span>
+                        </div>
+                        <div class="mytyson-handle-line" id="profile-handle"><span>@tysonmediagroup.org</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mytyson-header-tabs">
+                <button class="mytyson-tab-btn active" data-tab="overview">Overview</button>
+                <button class="mytyson-tab-btn" data-tab="about">About</button>
+                <button class="mytyson-tab-btn" data-tab="services">TYSON Services</button>
+            </div>
+        </section>
+
+        <!-- Active Signed-In Session Banner -->
+        <div class="mytyson-owner-banner" id="mytyson-owner-banner">
+            <span id="mytyson-owner-text">Authenticated</span>
+            <button class="mytyson-btn" id="mytyson-signout-btn" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Sign Out</button>
+        </div>
+
+        <!-- Two-Column Profile Layout -->
+        <div class="mytyson-grid">
+            <!-- Left Column: Intro / Details Sidebar -->
+            <aside>
+                <div class="mytyson-panel">
+                    <h2 class="mytyson-panel-title">Intro</h2>
+                    <ul class="mytyson-info-list">
+                        <li class="mytyson-info-row">
+                            <span class="mytyson-info-label">Account Handle</span>
+                            <span class="mytyson-info-value" id="sidebar-handle"><span>@tysonmediagroup.org</span></span>
+                        </li>
+                        <li class="mytyson-info-row">
+                            <span class="mytyson-info-label">TYSON Team</span>
+                            <span class="mytyson-info-value" id="profile-team-val">myTYSON Directory</span>
+                        </li>
+                        <li class="mytyson-info-row">
+                            <span class="mytyson-info-label">Division</span>
+                            <span class="mytyson-info-value" id="profile-division-val">TYSON Media Group</span>
+                        </li>
+                        <li class="mytyson-info-row">
+                            <span class="mytyson-info-label">Profile URL</span>
+                            <span class="mytyson-info-value" id="profile-url-val">tysonmediagroup.org/</span>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Right Column: Structured Account Information & Services -->
+            <div>
+                <div class="mytyson-panel" id="panel-about">
+                    <h2 class="mytyson-panel-title">About &amp; Account Information</h2>
+                    <div class="mytyson-detail-table">
+                        <div class="mytyson-detail-row">
+                            <span class="mytyson-detail-key">Full Name</span>
+                            <span class="mytyson-detail-val" id="detail-name-val">myTYSON Profile</span>
+                        </div>
+                        <div class="mytyson-detail-row">
+                            <span class="mytyson-detail-key">myTYSON Username</span>
+                            <span class="mytyson-detail-val" id="detail-user-val">myTYSON</span>
+                        </div>
+                        <div class="mytyson-detail-row">
+                            <span class="mytyson-detail-key">Organization Proof</span>
+                            <span class="mytyson-detail-val" id="detail-proof-val">myTYSON Directory</span>
+                        </div>
+                        <div class="mytyson-detail-row">
+                            <span class="mytyson-detail-key">Directory Endpoint</span>
+                            <span class="mytyson-detail-val">https://tysonmediagroup.org/</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mytyson-panel" id="panel-services">
+                    <h2 class="mytyson-panel-title">TYSON Ecosystem Services</h2>
+                    <div class="mytyson-services-grid">
+                        <a href="/" class="mytyson-service-link">
+                            <span class="mytyson-service-name">TYSON Media Group</span>
+                            <span class="mytyson-service-url">tysonmediagroup.org</span>
+                        </a>
+                        <a href="https://atlantis.tysonmediagroup.org" class="mytyson-service-link">
+                            <span class="mytyson-service-name">TYSON Atlantis</span>
+                            <span class="mytyson-service-url">atlantis.tysonmediagroup.org</span>
+                        </a>
+                        <a href="https://flame.atlantis.tysonmediagroup.org" class="mytyson-service-link">
+                            <span class="mytyson-service-name">Atlantis — Flame</span>
+                            <span class="mytyson-service-url">flame.atlantis.tysonmediagroup.org</span>
+                        </a>
+                        <a href="https://rpm.tysonmediagroup.org" class="mytyson-service-link">
+                            <span class="mytyson-service-name">RPM by TYSON</span>
+                            <span class="mytyson-service-url">rpm.tysonmediagroup.org</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign In Modal -->
+    <div class="mytyson-modal-backdrop" id="mytyson-login-modal" role="dialog" aria-modal="true">
+        <div class="mytyson-modal-card">
+            <button class="mytyson-modal-close" id="mytyson-modal-close" aria-label="Close">&times;</button>
+            <h2 class="mytyson-modal-title">myTYSON Sign In</h2>
+            <p class="mytyson-modal-sub">Enter your myTYSON username and password.</p>
+            <form id="mytyson-login-form" autocomplete="off">
+                <div class="mytyson-form-group">
+                    <label for="mytyson-input-user">Username</label>
+                    <input type="text" id="mytyson-input-user" placeholder="username@tysonmediagroup.org" required>
+                </div>
+                <div class="mytyson-form-group">
+                    <label for="mytyson-input-pass">Password</label>
+                    <input type="password" id="mytyson-input-pass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="mytyson-btn mytyson-btn-primary" style="width: 100%; padding: 0.75rem;">Sign In</button>
+                <div class="mytyson-error-msg" id="mytyson-login-error"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/mytyson.js"></script>
+</body>
+</html>

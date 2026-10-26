@@ -1,0 +1,1256 @@
+/* ==========================================================================
+   TYSON Media Group — Unified myTYSON Identity, Dashboard & Profile Framework
+   Phased with tysonmediagroup.org.myt5s.app, RPM World & TYSON Atlantis
+   Typography: Cormorant Garamond (Headers / Domains / Serif) & Inter (UI)
+   Themes: Black Frutiger Aero (Default), Noir Midnight, Frutiger Aqua, Wii, Nature
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Nunito:wght@400;600;700;800&display=block');
+
+:root {
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --container-max-width: 1680px;
+  --trans-fast: 0.2s ease;
+  --trans-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Theme 1: Default — Black Frutiger Aero (Obsidian Gloss Glass & 50/50 Specular Split) */
+:root, [data-theme="noir-aero"] {
+  --bg-black: #000000;
+  --bg-body-gradient:
+    radial-gradient(ellipse 90% 45% at 50% -10%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 45%, #000000 85%),
+    linear-gradient(180deg, #050507 0%, #000000 100%);
+  --bg-header: linear-gradient(180deg, #242429 0%, #151518 49%, #070709 50%, #000000 100%);
+  --bg-surface: linear-gradient(180deg, #16161b 0%, #0d0d11 49%, #060608 50%, #030305 100%);
+  --bg-surface-solid: #0a0a0d;
+  --bg-surface-hover: linear-gradient(180deg, #222229 0%, #14141a 49%, #0a0a0e 50%, #050507 100%);
+  --bg-card: linear-gradient(180deg, rgba(24, 24, 30, 0.92) 0%, rgba(12, 12, 16, 0.95) 49%, rgba(6, 6, 9, 0.98) 50%, rgba(3, 3, 5, 0.99) 100%);
+  --bg-input: #060608;
+
+  --text-white: #ffffff;
+  --text-pure: #ffffff;
+  --text-body: #e5e7eb;
+  --text-muted: #b0b7c3;
+  --text-dim: #7e8694;
+
+  --border-subtle: rgba(255, 255, 255, 0.24);
+  --border-hover: rgba(255, 255, 255, 0.65);
+  --accent-color: #ffffff;
+  --accent-glow: rgba(255, 255, 255, 0.42);
+  --accent-red: #dc2626;
+
+  --card-radius: 16px;
+  --btn-radius: 22px;
+  --box-shadow-card: 0 14px 36px rgba(0, 0, 0, 0.92), inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 -1px 0 rgba(0, 0, 0, 0.85);
+}
+
+/* Theme 2: Noir Midnight (Flat Architectural Monochrome) */
+[data-theme="noir"] {
+  --bg-black: #000000;
+  --bg-body-gradient: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.03) 0%, #000000 80%);
+  --bg-header: rgba(0, 0, 0, 0.98);
+  --bg-surface: #090909;
+  --bg-surface-solid: #090909;
+  --bg-surface-hover: #141414;
+  --bg-card: #0b0b0b;
+  --bg-input: #050505;
+
+  --text-white: #ffffff;
+  --text-pure: #ffffff;
+  --text-body: #e2e5eb;
+  --text-muted: #a3acb9;
+  --text-dim: #717a8a;
+
+  --border-subtle: rgba(255, 255, 255, 0.15);
+  --border-hover: rgba(255, 255, 255, 0.45);
+  --accent-color: #ffffff;
+  --accent-glow: rgba(255, 255, 255, 0.25);
+
+  --card-radius: 0px;
+  --btn-radius: 0px;
+  --box-shadow-card: none;
+}
+
+/* Theme 3: Frutiger Aero (Apple Skeuomorphic Aqua Glass) */
+[data-theme="frutiger"] {
+  --bg-black: #061c30;
+  --bg-body-gradient: radial-gradient(circle at 50% -10%, #1e6fa8 0%, #0d3b66 35%, #061c30 75%, #041424 100%);
+  --bg-header: linear-gradient(180deg, #134e7c 0%, #0e3b61 49%, #092a47 50%, #061e33 100%);
+  --bg-surface: linear-gradient(180deg, #165588 0%, #0e3c62 49%, #092b48 50%, #072138 100%);
+  --bg-surface-solid: #092c4a;
+  --bg-surface-hover: linear-gradient(180deg, #1d68a3 0%, #124a78 50%, #0b3355 100%);
+  --bg-card: linear-gradient(180deg, rgba(20, 74, 118, 0.92) 0%, rgba(11, 46, 76, 0.95) 50%, rgba(7, 32, 54, 0.98) 100%);
+  --bg-input: #061e33;
+
+  --text-white: #ffffff;
+  --text-pure: #ffffff;
+  --text-body: #e0f2fe;
+  --text-muted: #bae6fd;
+  --text-dim: #7dd3fc;
+
+  --border-subtle: rgba(125, 211, 252, 0.35);
+  --border-hover: #38bdf8;
+  --accent-color: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.45);
+
+  --card-radius: 16px;
+  --btn-radius: 22px;
+  --box-shadow-card: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* Theme 4: Nintendo Wii (Authentic Wii System Menu) */
+[data-theme="wii"] {
+  --bg-black: #ebf0f5;
+  --bg-body-gradient:
+    repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(30, 41, 59, 0.04) 39px, transparent 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(30, 41, 59, 0.04) 39px, transparent 40px),
+    radial-gradient(circle at 50% 0%, #ffffff 0%, #e2e8f0 70%, #cbd5e1 100%);
+  --bg-header: rgba(255, 255, 255, 0.96);
+  --bg-surface: #ffffff;
+  --bg-surface-solid: #ffffff;
+  --bg-surface-hover: #e8f4fc;
+  --bg-card: #ffffff;
+  --bg-input: #f8fafc;
+
+  --text-white: #111827;
+  --text-pure: #030712;
+  --text-body: #374151;
+  --text-muted: #6b7280;
+  --text-dim: #64748b;
+
+  --border-subtle: #1e293b;
+  --border-hover: #00a6e2;
+  --accent-color: #00a6e2;
+  --accent-glow: rgba(0, 166, 226, 0.45);
+
+  --card-radius: 24px;
+  --btn-radius: 32px;
+  --box-shadow-card: 0 8px 24px rgba(15, 23, 42, 0.08), inset 0 2px 0 #ffffff;
+  --font-heading: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+  --font-serif: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+  --font-sans: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+}
+
+/* Theme 5: Nature Botanical (Deep Moss Evergreen) */
+[data-theme="nature"] {
+  --bg-black: #051208;
+  --bg-body-gradient: radial-gradient(circle at 50% 10%, #0d2814 0%, #051208 85%);
+  --bg-header: rgba(5, 22, 11, 0.96);
+  --bg-surface: #0a2412;
+  --bg-surface-solid: #0a2412;
+  --bg-surface-hover: #13381c;
+  --bg-card: #0b2212;
+  --bg-input: #06150a;
+
+  --text-white: #f0fdf4;
+  --text-pure: #ffffff;
+  --text-body: #dcfce7;
+  --text-muted: #86efac;
+  --text-dim: #4ade80;
+
+  --border-subtle: rgba(74, 222, 128, 0.28);
+  --border-hover: rgba(74, 222, 128, 0.68);
+  --accent-color: #22c55e;
+  --accent-glow: rgba(34, 197, 94, 0.4);
+
+  --card-radius: 14px;
+  --btn-radius: 14px;
+  --box-shadow-card: 0 10px 28px rgba(5, 36, 17, 0.5), inset 0 1px 1px rgba(74, 222, 128, 0.22);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--bg-black);
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-black);
+  background-image: var(--bg-body-gradient);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.35s ease, color 0.3s ease;
+}
+
+/* Universal TYSON Domain Rule: Cormorant Garamond Italic */
+.brand-tmg-domain,
+.tmg-domain-text,
+.identity-handle,
+.identity-username,
+.service-url,
+.app-tile-domain,
+.auth-target-pill {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* ==========================================================================
+   LARGE, FULL-SCALE BRAND LOGOS (Cropped tightly & sized boldly)
+   ========================================================================== */
+.logo-img,
+.topbar-logo {
+  height: 48px !important;
+  max-height: 48px !important;
+  width: auto !important;
+  max-width: 440px !important;
+  object-fit: contain !important;
+  display: block;
+  opacity: 0.98;
+  filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.18));
+  transition: transform var(--trans-fast), filter var(--trans-fast);
+}
+
+.logo-img:hover,
+.topbar-logo:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 2px 18px var(--accent-glow));
+}
+
+.auth-banner-logo {
+  height: 62px !important;
+  max-height: 62px !important;
+  width: 100% !important;
+  max-width: 460px !important;
+  object-fit: contain !important;
+  margin: 0 auto 1.4rem auto;
+  display: block;
+  filter: drop-shadow(0 0 22px var(--accent-glow));
+}
+
+.app-tile-logo {
+  height: 46px !important;
+  max-height: 46px !important;
+  width: auto !important;
+  max-width: 360px !important;
+  object-fit: contain !important;
+  align-self: flex-start;
+  filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.2));
+}
+
+.cover-watermark-logo,
+.cover-watermark {
+  position: absolute;
+  left: 28px;
+  top: 22px;
+  z-index: 3;
+  height: 44px !important;
+  width: auto !important;
+  max-width: 380px !important;
+  opacity: 0.85;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85));
+}
+
+.footer-logo {
+  height: 54px !important;
+  max-height: 54px !important;
+  width: auto !important;
+  max-width: 460px !important;
+  object-fit: contain !important;
+  margin: 0 auto 1rem auto;
+  display: block;
+  filter: drop-shadow(0 0 18px var(--accent-glow));
+}
+
+[data-theme="wii"] .logo-img,
+[data-theme="wii"] .topbar-logo,
+[data-theme="wii"] .auth-banner-logo,
+[data-theme="wii"] .app-tile-logo,
+[data-theme="wii"] .footer-logo {
+  filter: invert(1) hue-rotate(180deg) brightness(0.18);
+}
+
+/* ==========================================================================
+   Global Navigation Header (84px 50/50 Specular Split, 3-Column TYSON Grid)
+   ========================================================================== */
+.main-header,
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-header);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-subtle);
+  height: 84px;
+  padding: 0 3.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.topbar-brand,
+.topbar-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  text-decoration: none;
+  color: var(--text-white);
+  justify-self: start;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.8rem;
+  justify-self: center;
+}
+
+.nav-link {
+  font-family: var(--font-heading);
+  font-size: 1.42rem;
+  font-weight: 500;
+  color: var(--text-pure);
+  text-decoration: none;
+  transition: var(--trans-fast);
+  padding: 0.35rem 0;
+  position: relative;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  opacity: 1;
+  color: var(--text-white);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-color);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.topbar-actions,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+}
+
+/* ==========================================================================
+   Tactile Skeuomorphic Buttons & Inputs (TYSON Noir-Aero Standard)
+   ========================================================================== */
+.btn,
+.top-btn,
+.settings-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.62rem 1.35rem;
+  border-radius: var(--btn-radius);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--text-white);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--box-shadow-card);
+  cursor: pointer;
+  transition: var(--trans-smooth);
+  white-space: nowrap;
+}
+
+.btn:hover,
+.top-btn:hover,
+.settings-toggle-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-surface-hover);
+  transform: translateY(-2px);
+}
+
+.btn-primary,
+.top-btn-primary {
+  background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 49%, #d1d5db 50%, #f3f4f6 100%);
+  color: #000000 !important;
+  border: 1px solid #ffffff;
+  box-shadow: 0 10px 26px rgba(255, 255, 255, 0.22), inset 0 1px 0 #ffffff;
+  font-weight: 700;
+}
+
+.btn-primary:hover,
+.top-btn-primary:hover {
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(255, 255, 255, 0.38), inset 0 1px 0 #ffffff;
+  transform: translateY(-2px);
+}
+
+.account-select {
+  background: var(--bg-surface);
+  color: var(--text-white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--btn-radius);
+  padding: 0.58rem 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 500;
+  box-shadow: var(--box-shadow-card);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Centerpiece Domain Banner Stage (Ad Astra Per Aspera • Stillness in Motion)
+   ========================================================================== */
+.tmg-editorial-stage {
+  text-align: center;
+  padding: 2.2rem 2rem 1.6rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+}
+
+.editorial-tag {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.domain-centerpiece-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 4.5vw, 4.1rem);
+  color: var(--text-white);
+  letter-spacing: 0.015em;
+  line-height: 1.1;
+  text-shadow: 0 0 28px var(--accent-glow);
+}
+
+.domain-centerpiece-sub {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.35rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   Facebook-Style Profile Header Framed in TYSON Obsidian Gloss
+   ========================================================================== */
+.preview-shell,
+.profile-header-shell {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 4px;
+}
+
+.preview-container,
+.profile-header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.cover-preview,
+.cover-photo {
+  height: 320px;
+  width: 100%;
+  border-bottom-left-radius: var(--card-radius);
+  border-bottom-right-radius: var(--card-radius);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-top: none;
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--box-shadow-card);
+}
+
+.cover-preview::after,
+.cover-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.22) 55%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+}
+
+.cover-actions-overlay {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  z-index: 4;
+  display: flex;
+  gap: 10px;
+}
+
+.cover-overlay-btn,
+.cover-edit-btn {
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--btn-radius);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(36, 36, 44, 0.9) 0%, rgba(12, 12, 16, 0.95) 50%, rgba(4, 4, 6, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.cover-edit-btn {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  z-index: 4;
+}
+
+.cover-overlay-btn:hover,
+.cover-edit-btn:hover {
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.identity-strip,
+.header-identity-row {
+  padding: 0 28px 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  position: relative;
+}
+
+.identity-left,
+.header-identity-left {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  margin-top: -76px;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.avatar-preview,
+.profile-avatar {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.38);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.92), inset 0 2px 4px rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 3.6rem;
+  font-weight: 600;
+  color: #ffffff;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  margin-top: -76px;
+  position: relative;
+  z-index: 5;
+}
+
+.avatar-preview img,
+.profile-avatar img.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-edit-trigger {
+  position: absolute;
+  right: 4px;
+  bottom: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: var(--bg-header);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.85);
+}
+
+.avatar-edit-trigger:hover {
+  border-color: #ffffff;
+  transform: scale(1.05);
+}
+
+.identity-meta,
+.identity-text {
+  padding-top: 18px;
+}
+
+.identity-title-row,
+.identity-name-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.identity-title,
+.identity-name {
+  font-family: var(--font-heading);
+  font-size: 2.75rem;
+  font-weight: 500;
+  color: var(--text-white);
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+/* ==========================================================================
+   LARGE, CRISP WHITE TYSON LOGO BADGE ON PROFILES
+   ========================================================================== */
+.tyson-white-badge,
+.tyson-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2b2b33 0%, #141419 49%, #07070a 50%, #000000 100%);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.85), 0 0 14px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  height: 36px;
+  user-select: none;
+}
+
+.tyson-white-badge img,
+.tyson-logo-badge img {
+  height: 20px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.45));
+}
+
+.status-badge,
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.badge-team {
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.35) 0%, rgba(127, 29, 29, 0.45) 100%);
+  border: 1px solid rgba(248, 113, 113, 0.55);
+  color: #fecaca;
+}
+
+.badge-official {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.32) 0%, rgba(120, 53, 15, 0.45) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  color: #fde68a;
+}
+
+.badge-support {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.32) 0%, rgba(12, 74, 110, 0.45) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  color: #bae6fd;
+}
+
+.badge-member {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--text-muted);
+}
+
+.identity-username,
+.identity-handle {
+  margin-top: 6px;
+  font-size: 1.35rem;
+  color: var(--text-white);
+  opacity: 0.92;
+}
+
+.identity-url,
+.identity-sub {
+  margin-top: 2px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.profile-tabs {
+  margin: 0 28px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.profile-tab {
+  padding: 14px 8px;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease;
+}
+
+.profile-tab.active,
+.profile-tab:hover {
+  color: var(--text-white);
+  border-bottom-color: var(--text-white);
+}
+
+/* ==========================================================================
+   Main Content Grid & Obsidian Gloss Cards
+   ========================================================================== */
+.dashboard-main,
+.profile-body {
+  max-width: 1280px;
+  width: 100%;
+  margin: 32px auto 80px;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+
+.profile-body {
+  grid-template-columns: 400px 1fr;
+  align-items: start;
+}
+
+.card,
+.panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--card-radius);
+  padding: 28px;
+  box-shadow: var(--box-shadow-card);
+  margin-bottom: 24px;
+  transition: border-color var(--trans-fast);
+}
+
+.card:hover,
+.panel-card:hover {
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.card-full {
+  grid-column: 1 / -1;
+}
+
+.card-header,
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title,
+.panel-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: var(--text-white);
+  line-height: 1.2;
+}
+
+.card-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-white);
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 15px;
+  color: var(--text-white);
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  outline: none;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.75);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--border-hover);
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.upload-zone {
+  border: 1px dashed var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.upload-zone-text {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.upload-zone-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.preset-row,
+.directory-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.preset-chip,
+.dir-pill {
+  padding: 8px 15px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-body);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--box-shadow-card);
+  transition: var(--trans-fast);
+}
+
+.preset-chip:hover,
+.dir-pill:hover,
+.dir-pill.active {
+  color: var(--text-white);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.app-tile {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--card-radius);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: var(--box-shadow-card);
+  transition: var(--trans-smooth);
+}
+
+.app-tile:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+}
+
+.app-tile-name {
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.app-tile-domain {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+}
+
+/* Profile Intro & Details */
+.intro-bio {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--text-body);
+  margin-bottom: 18px;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.9rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.info-label {
+  color: var(--text-muted);
+}
+
+.info-value {
+  color: var(--text-white);
+  font-weight: 500;
+  text-align: right;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.detail-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: var(--box-shadow-card);
+}
+
+.detail-box-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.detail-box-value {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 18px 22px;
+  text-decoration: none;
+  color: var(--text-white);
+  box-shadow: var(--box-shadow-card);
+  transition: var(--trans-smooth);
+}
+
+.service-row:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.service-name {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.service-url {
+  font-size: 1.08rem;
+  color: var(--text-muted);
+}
+
+.service-tag {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-white);
+}
+
+.toast-banner {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(22, 163, 74, 0.2);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #bbf7d0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toast-banner.visible {
+  display: block;
+}
+
+/* ==========================================================================
+   Auth Portal (auth.my.tysonmediagroup.org)
+   ========================================================================== */
+.auth-page-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.auth-center-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--card-radius);
+  padding: 42px 38px;
+  box-shadow: var(--box-shadow-card);
+}
+
+.auth-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-heading {
+  font-family: var(--font-heading);
+  font-size: 2.3rem;
+  font-weight: 500;
+  color: var(--text-white);
+}
+
+.auth-subheading {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.auth-target-pill {
+  margin-top: 12px;
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-white);
+}
+
+.auth-continue-box {
+  display: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 22px;
+  box-shadow: var(--box-shadow-card);
+}
+
+.auth-continue-box.visible {
+  display: block;
+}
+
+.auth-error {
+  display: none;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+  font-size: 0.88rem;
+}
+
+.auth-error.visible {
+  display: block;
+}
+
+/* ==========================================================================
+   Slide-Out Multi-Theme Settings Drawer (TYSON Standard)
+   ========================================================================== */
+.settings-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.settings-drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  max-width: 92vw;
+  height: 100vh;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-subtle);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.9);
+  z-index: 2001;
+  padding: 28px 24px;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.settings-drawer.open {
+  transform: translateX(0);
+}
+
+.theme-option-btn {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-white);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--box-shadow-card);
+  transition: var(--trans-fast);
+}
+
+.theme-option-btn:hover,
+.theme-option-btn.active {
+  border-color: var(--border-hover);
+}
+
+@media (max-width: 980px) {
+  .main-header,
+  .topbar {
+    grid-template-columns: 1fr auto;
+    padding: 0 1.5rem;
+  }
+  .main-nav {
+    display: none;
+  }
+  .identity-strip,
+  .header-identity-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .identity-left,
+  .header-identity-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .dashboard-main,
+  .profile-body {
+    grid-template-columns: 1fr;
+    padding: 0 1.25rem;
+  }
+  .apps-grid {
+    grid-template-columns: 1fr;
+  }
+}
