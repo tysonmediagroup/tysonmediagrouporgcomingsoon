@@ -2,6 +2,7 @@
   var STORAGE_KEY = 'mytyson_session_v1';
   var CUSTOM_KEY_PREFIX = 'mytyson_profile_custom_';
   var THEME_KEY = 'tyson_active_theme';
+  var CHUNK_COUNT = 6;
 
   function setSharedCookie(name, value, days) {
     var expires = '';
@@ -19,8 +20,25 @@
   }
 
   function getCookie(name) {
-    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? decodeURIComponent(match[2]) : null;
+    var escaped = name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1');
+    var match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function readChunkedCookie(slug) {
+    if (!slug) return null;
+    var combined = '';
+    for (var c = 0; c < CHUNK_COUNT; c++) {
+      var part = getCookie('mytyson_p' + c + '_' + slug);
+      if (!part) break;
+      combined += part;
+    }
+    if (!combined) return null;
+    try {
+      return JSON.parse(combined);
+    } catch (e) {
+      return null;
+    }
   }
 
   function ingestUrlSync() {
@@ -55,18 +73,24 @@
   }
 
   function getCustomProfile(slug) {
+    if (!slug) return null;
     try {
-      var raw = localStorage.getItem(CUSTOM_KEY_PREFIX + slug) || getCookie('mytyson_custom_' + slug);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      return null;
-    }
+      var raw = localStorage.getItem(CUSTOM_KEY_PREFIX + slug);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    var chunked = readChunkedCookie(slug);
+    if (chunked) return chunked;
+    try {
+      var fallback = getCookie('mytyson_custom_' + slug);
+      if (fallback) return JSON.parse(fallback);
+    } catch (e) {}
+    return null;
   }
 
-  function applyCustomizations() {
+  function applyCustomizations(customData) {
     var pageSlug = document.body.getAttribute('data-profile-slug');
     if (!pageSlug) return;
-    var custom = getCustomProfile(pageSlug);
+    var custom = customData || getCustomProfile(pageSlug);
     if (!custom) return;
 
     var coverEl = document.getElementById('profileCoverPhoto');
@@ -128,11 +152,58 @@
     var authBtns = document.querySelectorAll('.js-auth-link');
     for (var j = 0; j < authBtns.length; j++) {
       var returnUrl = window.location.href.split('?')[0];
-      authBtns[j].href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=' + encodeURIComponent('tysonmediagroup.org/' + (pageSlug || ''));
+      authBtns[j].href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=' + encodeURIComponent('tmg');
       if (session && session.name) {
         authBtns[j].textContent = 'Signed in: ' + session.name;
       }
     }
+  }
+
+  function fetchCloudProfile() {
+    var pageSlug = document.body.getAttribute('data-profile-slug');
+    if (!pageSlug) return;
+    var dashBase = getDashboardBaseUrl();
+    fetch(dashBase + '/api/profile?slug=' + encodeURIComponent(pageSlug) + '&_t=' + Date.now())
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (cloudProfile) {
+        if (cloudProfile && (cloudProfile.pfpUrl || cloudProfile.coverUrl || cloudProfile.displayName)) {
+          try {
+            localStorage.setItem(CUSTOM_KEY_PREFIX + pageSlug, JSON.stringify(cloudProfile));
+          } catch (e) {}
+          applyCustomizations(cloudProfile);
+        }
+      })
+      .catch(function () {});
+  }
+
+  function initBridgeIframe() {
+    var pageSlug = document.body.getAttribute('data-profile-slug');
+    if (!pageSlug) return;
+    var dashBase = getDashboardBaseUrl();
+
+    window.addEventListener('message', function (ev) {
+      if (!ev.data || typeof ev.data !== 'object') return;
+      if (ev.data.type === 'MYTYSON_BRIDGE_STATE' && ev.data.custom) {
+        try {
+          localStorage.setItem(CUSTOM_KEY_PREFIX + pageSlug, JSON.stringify(ev.data.custom));
+        } catch (e) {}
+        applyCustomizations(ev.data.custom);
+      }
+    });
+
+    var iframe = document.createElement('iframe');
+    iframe.src = dashBase + '/bridge.html?slug=' + encodeURIComponent(pageSlug);
+    iframe.style.position = 'fixed';
+    iframe.style.width = '0px';
+    iframe.style.height = '0px';
+    iframe.style.border = 'none';
+    iframe.style.opacity = '0';
+    iframe.style.pointerEvents = 'none';
+    iframe.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(iframe);
   }
 
   function applyTheme(themeName) {
@@ -190,5 +261,7 @@
     applyCustomizations();
     updateLinksAndSession();
     initThemeDrawer();
+    fetchCloudProfile();
+    initBridgeIframe();
   });
 })();
