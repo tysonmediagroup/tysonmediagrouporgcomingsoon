@@ -108,8 +108,19 @@
     return profile;
   }
 
+  function getPageSlug() {
+    var attr = document.body.getAttribute('data-profile-slug');
+    if (attr && attr !== 'dynamic') return attr.toLowerCase();
+    var pathParts = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+    var pathSlug = pathParts[0];
+    if (pathSlug && pathSlug !== '404' && pathSlug !== 'index.html' && pathSlug !== '404.html') {
+      return pathSlug.toLowerCase();
+    }
+    return (attr || '').toLowerCase();
+  }
+
   function applyCustomizations(customData) {
-    var pageSlug = document.body.getAttribute('data-profile-slug');
+    var pageSlug = getPageSlug();
     if (!pageSlug) return;
     var custom = customData || getCustomProfile(pageSlug);
     if (!custom) return;
@@ -145,6 +156,11 @@
     if (divEl && custom.division) {
       divEl.textContent = custom.division;
     }
+
+    var credName = document.getElementById('credDisplayName');
+    if (credName && custom.displayName) {
+      credName.textContent = custom.showRealName === false ? ('@' + pageSlug) : custom.displayName;
+    }
   }
 
   function getDashboardBaseUrl() {
@@ -167,7 +183,7 @@
     var session = getSession();
     var dashBase = getDashboardBaseUrl();
     var authBase = getAuthBaseUrl();
-    var pageSlug = document.body.getAttribute('data-profile-slug');
+    var pageSlug = getPageSlug();
 
     var dashBtns = document.querySelectorAll('.js-dashboard-link');
     for (var i = 0; i < dashBtns.length; i++) {
@@ -184,17 +200,114 @@
     }
   }
 
+  function renderAccountData(acc) {
+    if (!acc) return;
+    var pageSlug = (acc.slug || '').toLowerCase();
+    document.title = (acc.name || acc.slug) + ' (@' + acc.slug + ') | TYSON Media Group';
+
+    var stageDomain = document.getElementById('stageProfileDomain');
+    if (stageDomain) stageDomain.textContent = 'tysonmediagroup.org/' + pageSlug;
+
+    var footerDomain = document.getElementById('footerDomain');
+    if (footerDomain) footerDomain.textContent = 'tysonmediagroup.org/' + pageSlug;
+
+    var nameEl = document.getElementById('profileDisplayName');
+    if (nameEl) {
+      nameEl.textContent = (acc.showRealName === false) ? ('@' + pageSlug) : (acc.name || acc.displayName || ('@' + pageSlug));
+    }
+
+    var handleText = document.getElementById('profileHandleText');
+    if (handleText) handleText.textContent = (acc.username || (pageSlug + '@tysonmediagroup.org'));
+
+    var subText = document.getElementById('profileSubText');
+    if (subText) subText.innerHTML = '<span class="brand-tmg-domain">tysonmediagroup.org/' + pageSlug + '</span> &bull; TYSON Team: ' + (acc.team || 'N');
+
+    var badgePill = document.getElementById('profileBadgePill');
+    if (badgePill) {
+      badgePill.textContent = acc.badge || 'Standard Member';
+      badgePill.className = 'role-badge ' + (acc.badgeClass || 'badge-member');
+    }
+
+    var tysonBadge = document.getElementById('profileTysonBadge');
+    if (tysonBadge) {
+      tysonBadge.style.display = acc.hasTysonBadge ? 'inline-flex' : 'none';
+    }
+
+    var bioEl = document.getElementById('profileBioText');
+    if (bioEl && acc.bio) bioEl.textContent = acc.bio;
+
+    var divEl = document.getElementById('profileDivisionText');
+    if (divEl && acc.division) divEl.textContent = acc.division;
+
+    var avatarBox = document.getElementById('profileAvatarBox');
+    if (avatarBox) {
+      if (acc.pfpUrl) {
+        avatarBox.style.background = '#09090c';
+        avatarBox.innerHTML = '<img class="avatar-img" src="' + acc.pfpUrl + '" alt="' + (acc.name || pageSlug) + '">';
+      } else {
+        avatarBox.style.background = acc.avatarBg || 'linear-gradient(135deg, #18181b 0%, #09090b 100%)';
+        avatarBox.textContent = acc.initials || pageSlug.slice(0, 2).toUpperCase();
+      }
+    }
+
+    var coverEl = document.getElementById('profileCoverPhoto');
+    if (coverEl && acc.coverBg) {
+      coverEl.style.backgroundImage = acc.coverBg;
+    }
+
+    var infoHandle = document.getElementById('infoHandleText');
+    if (infoHandle) infoHandle.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+
+    var infoTeam = document.getElementById('infoTeamText');
+    if (infoTeam) infoTeam.textContent = acc.team || 'N';
+
+    var infoRole = document.getElementById('infoRoleText');
+    if (infoRole) infoRole.textContent = acc.role || 'Member';
+
+    var infoUrl = document.getElementById('infoUrlText');
+    if (infoUrl) infoUrl.textContent = 'tysonmediagroup.org/' + pageSlug;
+
+    var credUsername = document.getElementById('credUsernameText');
+    if (credUsername) credUsername.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+
+    var credTeam = document.getElementById('credTeamText');
+    if (credTeam) credTeam.textContent = acc.team || 'N';
+
+    var credDomain = document.getElementById('credDomainText');
+    if (credDomain) credDomain.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+
+    var credName = document.getElementById('credDisplayName');
+    if (credName) {
+      credName.textContent = (acc.showRealName === false) ? ('@' + pageSlug) : (acc.name || acc.displayName || pageSlug);
+    }
+  }
+
   function fetchCloudProfile() {
-    var pageSlug = document.body.getAttribute('data-profile-slug');
+    var pageSlug = getPageSlug();
     if (!pageSlug) return;
     var dashBase = getDashboardBaseUrl();
+
+    // 1. Fetch dynamic account details from /api/accounts
+    fetch(dashBase + '/api/accounts?_t=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (accList) {
+        if (Array.isArray(accList)) {
+          var matched = accList.find(function (a) { return a && a.slug && a.slug.toLowerCase() === pageSlug; });
+          if (matched) {
+            renderAccountData(matched);
+          }
+        }
+      })
+      .catch(function () {});
+
+    // 2. Fetch customizations from /api/profile
     fetch(dashBase + '/api/profile?slug=' + encodeURIComponent(pageSlug) + '&_t=' + Date.now())
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
       .then(function (cloudProfile) {
-        if (cloudProfile && (cloudProfile.pfpUrl || cloudProfile.coverUrl || cloudProfile.displayName)) {
+        if (cloudProfile && (cloudProfile.pfpUrl || cloudProfile.coverUrl || cloudProfile.displayName || cloudProfile.showRealName !== undefined)) {
           var existing = {};
           try {
             var raw = localStorage.getItem(CUSTOM_KEY_PREFIX + pageSlug);
