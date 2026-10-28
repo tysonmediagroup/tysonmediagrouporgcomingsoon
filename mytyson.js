@@ -128,8 +128,12 @@
     }
 
     var nameEl = document.getElementById('profileDisplayName');
-    if (nameEl && custom.displayName) {
-      nameEl.textContent = custom.displayName;
+    if (nameEl) {
+      if (custom.showRealName === false) {
+        nameEl.textContent = '@' + pageSlug;
+      } else if (custom.displayName) {
+        nameEl.textContent = custom.displayName;
+      }
     }
 
     var bioEl = document.getElementById('profileBioText');
