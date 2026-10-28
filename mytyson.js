@@ -2,7 +2,7 @@
   var STORAGE_KEY = 'mytyson_session_v1';
   var CUSTOM_KEY_PREFIX = 'mytyson_profile_custom_';
   var THEME_KEY = 'tyson_active_theme';
-  var CHUNK_COUNT = 6;
+  var CHUNK_COUNT = 8;
 
   function setSharedCookie(name, value, days) {
     var expires = '';
@@ -28,7 +28,7 @@
   function readChunkedCookie(slug) {
     if (!slug) return null;
     var combined = '';
-    for (var c = 0; c < CHUNK_COUNT; c++) {
+    for (var c = 0; c < 12; c++) {
       var part = getCookie('mytyson_p' + c + '_' + slug);
       if (!part) break;
       combined += part;
@@ -57,7 +57,19 @@
       try {
         var cObj = JSON.parse(atob(customSync));
         if (cObj && cObj.slug) {
-          localStorage.setItem(CUSTOM_KEY_PREFIX + cObj.slug, JSON.stringify(cObj));
+          var existing = {};
+          try {
+            var rawEx = localStorage.getItem(CUSTOM_KEY_PREFIX + cObj.slug);
+            if (rawEx) existing = JSON.parse(rawEx);
+          } catch (e) {}
+          var merged = Object.assign({}, existing, cObj);
+          if (!cObj.pfpUrl && existing.pfpUrl) {
+            merged.pfpUrl = existing.pfpUrl;
+          }
+          if (!cObj.coverUrl && existing.coverUrl) {
+            merged.coverUrl = existing.coverUrl;
+          }
+          localStorage.setItem(CUSTOM_KEY_PREFIX + cObj.slug, JSON.stringify(merged));
         }
       } catch (e) {}
     }
@@ -74,17 +86,26 @@
 
   function getCustomProfile(slug) {
     if (!slug) return null;
+    var profile = null;
     try {
       var raw = localStorage.getItem(CUSTOM_KEY_PREFIX + slug);
-      if (raw) return JSON.parse(raw);
+      if (raw) profile = JSON.parse(raw);
     } catch (e) {}
     var chunked = readChunkedCookie(slug);
-    if (chunked) return chunked;
-    try {
-      var fallback = getCookie('mytyson_custom_' + slug);
-      if (fallback) return JSON.parse(fallback);
-    } catch (e) {}
-    return null;
+    if (!profile) {
+      if (chunked) return chunked;
+      try {
+        var fallback = getCookie('mytyson_custom_' + slug);
+        if (fallback) return JSON.parse(fallback);
+      } catch (e) {}
+      return null;
+    }
+    if (chunked) {
+      if (!profile.pfpUrl && chunked.pfpUrl) profile.pfpUrl = chunked.pfpUrl;
+      if (!profile.coverUrl && chunked.coverUrl) profile.coverUrl = chunked.coverUrl;
+      if (!profile.displayName && chunked.displayName) profile.displayName = chunked.displayName;
+    }
+    return profile;
   }
 
   function applyCustomizations(customData) {
@@ -170,10 +191,16 @@
       })
       .then(function (cloudProfile) {
         if (cloudProfile && (cloudProfile.pfpUrl || cloudProfile.coverUrl || cloudProfile.displayName)) {
+          var existing = {};
           try {
-            localStorage.setItem(CUSTOM_KEY_PREFIX + pageSlug, JSON.stringify(cloudProfile));
+            var raw = localStorage.getItem(CUSTOM_KEY_PREFIX + pageSlug);
+            if (raw) existing = JSON.parse(raw);
           } catch (e) {}
-          applyCustomizations(cloudProfile);
+          var merged = Object.assign({}, existing, cloudProfile);
+          try {
+            localStorage.setItem(CUSTOM_KEY_PREFIX + pageSlug, JSON.stringify(merged));
+          } catch (e) {}
+          applyCustomizations(merged);
         }
       })
       .catch(function () {});
