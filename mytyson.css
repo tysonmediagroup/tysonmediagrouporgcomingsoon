@@ -8,6 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Nunito:wght@400;600;700;800&display=block');
 
 :root {
+  --font-editorial: 'PP Editorial New', 'PPEditorialNew', 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
   --font-heading: 'Cormorant Garamond', Georgia, serif;
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -186,7 +187,7 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  transition: background 0.35s ease, color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 /* Universal TYSON Domain Rule: Cormorant Garamond Italic */
@@ -211,7 +212,7 @@ body {
   height: 48px !important;
   max-height: 48px !important;
   width: auto !important;
-  max-width: 440px !important;
+  max-width: min(440px, 100%) !important;
   object-fit: contain !important;
   display: block;
   opacity: 0.98;
@@ -226,24 +227,37 @@ body {
 }
 
 .auth-banner-logo {
-  height: 62px !important;
+  height: auto !important;
   max-height: 62px !important;
   width: 100% !important;
-  max-width: 460px !important;
+  max-width: min(460px, 100%) !important;
   object-fit: contain !important;
   margin: 0 auto 1.4rem auto;
   display: block;
   filter: drop-shadow(0 0 22px var(--accent-glow));
 }
 
+.app-tile-logo-box {
+  width: 100%;
+  max-width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
 .app-tile-logo {
-  height: 46px !important;
-  max-height: 46px !important;
+  max-width: 100% !important;
+  max-height: 38px !important;
   width: auto !important;
-  max-width: 360px !important;
+  height: auto !important;
   object-fit: contain !important;
+  object-position: left center !important;
   align-self: flex-start;
-  filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.2));
+  display: block !important;
+  filter: none !important;
 }
 
 .cover-watermark-logo,
@@ -261,10 +275,10 @@ body {
 }
 
 .footer-logo {
-  height: 54px !important;
+  height: auto !important;
   max-height: 54px !important;
   width: auto !important;
-  max-width: 460px !important;
+  max-width: min(460px, 88vw) !important;
   object-fit: contain !important;
   margin: 0 auto 1rem auto;
   display: block;
@@ -297,6 +311,8 @@ body {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .topbar-brand,
@@ -926,7 +942,7 @@ body {
 
 .apps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
 }
 
@@ -942,12 +958,17 @@ body {
   justify-content: space-between;
   gap: 18px;
   box-shadow: var(--box-shadow-card);
-  transition: var(--trans-smooth);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  min-width: 0;
+  contain: paint layout;
+  will-change: transform;
 }
 
 .app-tile:hover {
   border-color: var(--border-hover);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .app-tile-name {
@@ -1247,6 +1268,90 @@ body {
   border-color: var(--border-hover);
 }
 
+/* Switch Toggle Component */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.switch-toggle .toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.16);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 28px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.switch-toggle .toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background: #ffffff;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.switch-toggle input:checked + .toggle-slider {
+  background: #10b981;
+  border-color: #059669;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
+}
+
+.switch-toggle input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+  background: #ffffff;
+}
+
+/* Auth View Switcher Tabs */
+.auth-nav-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 6px;
+}
+
+.auth-nav-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.auth-nav-tab.active {
+  background: var(--bg-surface-hover);
+  color: var(--text-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
 /* ==========================================================================
    Comprehensive Responsive Overhaul for Mobile & Half-Screen Split Views
    Breakpoints:
@@ -1452,48 +1557,105 @@ body {
 }
 
 @media (max-width: 640px) {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   .main-header,
   .topbar {
-    height: 60px;
-    padding: 0 0.85rem;
+    height: auto;
+    min-height: 58px;
+    padding: 8px 12px;
     gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-brand,
+  .topbar-left {
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   .logo-img,
   .topbar-logo {
-    height: 28px !important;
-    max-height: 28px !important;
-    max-width: 175px !important;
+    height: 24px !important;
+    max-height: 24px !important;
+    max-width: min(145px, 42vw) !important;
+  }
+
+  .main-nav {
+    display: flex;
+    width: 100%;
+    order: 3;
+    justify-content: flex-start;
+    gap: 1.15rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 6px 2px 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .auth-page-body .main-nav {
+    display: none;
+  }
+
+  .main-nav .nav-link {
+    font-size: 1.05rem;
+    padding: 2px 0;
   }
 
   .topbar-actions,
   .topbar-right {
-    gap: 6px;
+    gap: 5px;
+    flex-shrink: 0;
   }
 
   .btn,
   .top-btn,
   .settings-toggle-btn {
-    padding: 0.42rem 0.72rem;
-    font-size: 0.84rem;
-    border-radius: 12px;
+    padding: 0.38rem 0.62rem;
+    font-size: 0.78rem;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .brand-tmg-domain,
+  .tmg-domain-text,
+  .domain-centerpiece-title,
+  .identity-username,
+  .identity-handle,
+  .identity-url,
+  .info-value,
+  .detail-box-value,
+  .auth-target-pill {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
   }
 
   .tmg-editorial-stage {
-    padding: 1.2rem 0.75rem 0.9rem;
+    padding: 1rem 0.75rem 0.75rem;
   }
 
   .editorial-tag {
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
   }
 
   .domain-centerpiece-title {
-    font-size: 1.7rem;
+    font-size: clamp(1.45rem, 6.5vw, 1.85rem);
+    line-height: 1.15;
   }
 
   .domain-centerpiece-sub {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .preview-container,
@@ -1663,17 +1825,38 @@ body {
     font-size: 0.76rem;
   }
 
+  .auth-center-wrap {
+    padding: 18px 10px;
+    min-height: calc(100dvh - 64px);
+  }
+
   .auth-box {
-    padding: 28px 18px;
-    margin: 0 10px;
+    padding: 22px 15px;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .auth-heading {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+    line-height: 1.18;
+  }
+
+  .auth-target-pill {
+    font-size: 0.88rem;
+    padding: 4px 11px;
   }
 
   .auth-banner-logo {
-    height: 44px !important;
-    max-height: 44px !important;
+    height: auto !important;
+    max-height: 40px !important;
+    max-width: 82vw !important;
+  }
+
+  .footer-logo {
+    height: auto !important;
+    max-height: 36px !important;
+    max-width: 78vw !important;
   }
 }

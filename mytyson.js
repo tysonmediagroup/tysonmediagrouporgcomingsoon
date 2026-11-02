@@ -193,9 +193,18 @@
     var authBtns = document.querySelectorAll('.js-auth-link');
     for (var j = 0; j < authBtns.length; j++) {
       var returnUrl = window.location.href.split('?')[0];
-      authBtns[j].href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=' + encodeURIComponent('tmg');
-      if (session && session.name) {
-        authBtns[j].textContent = 'Signed in: ' + session.name;
+      if (session && session.slug) {
+        authBtns[j].href = dashBase + '?user=' + encodeURIComponent(session.slug);
+        var labelFull = authBtns[j].querySelector('.auth-btn-label-full');
+        var labelShort = authBtns[j].querySelector('.auth-btn-label-short');
+        if (labelFull) {
+          labelFull.textContent = session.name || ('@' + session.slug);
+          if (labelShort) labelShort.textContent = '@' + session.slug;
+        } else {
+          authBtns[j].textContent = 'Signed in: ' + (session.name || ('@' + session.slug));
+        }
+      } else {
+        authBtns[j].href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=' + encodeURIComponent('tmg');
       }
     }
   }
@@ -216,11 +225,15 @@
       nameEl.textContent = (acc.showRealName === false) ? ('@' + pageSlug) : (acc.name || acc.displayName || ('@' + pageSlug));
     }
 
+    var isStaff = (acc.team === 'Y' || acc.team === true || acc.team === 'Official TYSON Account' || acc.team === 'Official Support Account');
+    var formattedHandle = isStaff ? (pageSlug + '@tysonmediagroup.org') : ('@' + pageSlug);
+    var teamLabel = isStaff ? 'TYSON Staff' : 'Community Member';
+
     var handleText = document.getElementById('profileHandleText');
-    if (handleText) handleText.textContent = (acc.username || (pageSlug + '@tysonmediagroup.org'));
+    if (handleText) handleText.textContent = formattedHandle;
 
     var subText = document.getElementById('profileSubText');
-    if (subText) subText.innerHTML = '<span class="brand-tmg-domain">tysonmediagroup.org/' + pageSlug + '</span> &bull; TYSON Team: ' + (acc.team || 'N');
+    if (subText) subText.innerHTML = '<span class="brand-tmg-domain">tysonmediagroup.org/' + pageSlug + '</span> &bull; ' + teamLabel;
 
     var badgePill = document.getElementById('profileBadgePill');
     if (badgePill) {
@@ -256,10 +269,10 @@
     }
 
     var infoHandle = document.getElementById('infoHandleText');
-    if (infoHandle) infoHandle.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+    if (infoHandle) infoHandle.textContent = formattedHandle;
 
     var infoTeam = document.getElementById('infoTeamText');
-    if (infoTeam) infoTeam.textContent = acc.team || 'N';
+    if (infoTeam) infoTeam.textContent = teamLabel;
 
     var infoRole = document.getElementById('infoRoleText');
     if (infoRole) infoRole.textContent = acc.role || 'Member';
@@ -268,13 +281,13 @@
     if (infoUrl) infoUrl.textContent = 'tysonmediagroup.org/' + pageSlug;
 
     var credUsername = document.getElementById('credUsernameText');
-    if (credUsername) credUsername.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+    if (credUsername) credUsername.textContent = formattedHandle;
 
     var credTeam = document.getElementById('credTeamText');
-    if (credTeam) credTeam.textContent = acc.team || 'N';
+    if (credTeam) credTeam.textContent = teamLabel;
 
     var credDomain = document.getElementById('credDomainText');
-    if (credDomain) credDomain.textContent = acc.username || (pageSlug + '@tysonmediagroup.org');
+    if (credDomain) credDomain.textContent = 'tysonmediagroup.org/' + pageSlug;
 
     var credName = document.getElementById('credDisplayName');
     if (credName) {
