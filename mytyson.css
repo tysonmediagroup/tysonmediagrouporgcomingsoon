@@ -1469,18 +1469,24 @@ body {
     font-size: 1.15rem;
   }
 
-  /* Header action buttons row spans nicely on half screen */
+  /* Header action buttons row on profile header (Save Changes / Open Public Profile) */
   .identity-strip > .topbar-actions,
   .header-identity-row > .topbar-right {
     width: 100%;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
   }
 
   .identity-strip > .topbar-actions .btn,
   .header-identity-row > .topbar-right .top-btn {
-    flex: 1 1 200px;
+    flex: 0 1 auto;
+    height: auto !important;
+    min-height: 0;
+    padding: 0.58rem 1.25rem;
+    font-size: 1rem;
     text-align: center;
   }
 
@@ -1501,6 +1507,13 @@ body {
   .panel-title {
     font-size: 1.6rem;
   }
+}
+
+/* ==========================================================================
+   TYSON Mobile Bottom Command Bar (Hidden on Desktop, Active on Mobile <= 768px)
+   ========================================================================== */
+.tyson-command-bar {
+  display: none;
 }
 
 @media (max-width: 900px) {
@@ -1556,76 +1569,136 @@ body {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   html,
   body {
     max-width: 100vw;
     overflow-x: hidden;
   }
 
+  body {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Top Mobile Navbar: Clean Banner Logo Only */
   .main-header,
   .topbar {
-    height: auto;
-    min-height: 58px;
-    padding: 8px 12px;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 62px !important;
+    min-height: 62px !important;
+    padding: 0 16px !important;
+  }
+
+  .main-header .main-nav,
+  .topbar .main-nav,
+  .main-header > .topbar-actions,
+  .main-header > .topbar-right,
+  .topbar > .topbar-actions,
+  .topbar > .topbar-right {
+    display: none !important;
   }
 
   .topbar-brand,
   .topbar-left {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-
-  .logo-img,
-  .topbar-logo {
-    height: 24px !important;
-    max-height: 24px !important;
-    max-width: min(145px, 42vw) !important;
-  }
-
-  .main-nav {
-    display: flex;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
     width: 100%;
-    order: 3;
-    justify-content: flex-start;
-    gap: 1.15rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: 6px 2px 2px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0 auto;
   }
 
-  .main-nav::-webkit-scrollbar {
-    display: none;
+  .main-header .logo-img,
+  .topbar .logo-img,
+  .topbar .topbar-logo {
+    height: 32px !important;
+    max-height: 32px !important;
+    width: auto !important;
+    max-width: min(250px, 78vw) !important;
+    margin: 0 auto !important;
   }
 
-  .auth-page-body .main-nav {
-    display: none;
+  /* Bottom Mobile Command Bar (Sign Out/In + Public Profile + Gear Settings) */
+  .tyson-command-bar {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1400;
+    background: var(--bg-header);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border-subtle);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
 
-  .main-nav .nav-link {
-    font-size: 1.05rem;
-    padding: 2px 0;
+  .poweradmin-body .tyson-command-bar {
+    background: linear-gradient(180deg, #2b0d10 0%, #1a0709 49%, #0e0305 50%, #060102 100%);
+    border-top: 1px solid rgba(239, 68, 68, 0.45);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 120, 120, 0.35);
   }
 
-  .topbar-actions,
-  .topbar-right {
-    gap: 5px;
-    flex-shrink: 0;
-  }
-
-  .btn,
-  .top-btn,
-  .settings-toggle-btn {
-    padding: 0.38rem 0.62rem;
-    font-size: 0.78rem;
-    border-radius: 10px;
+  .tyson-command-bar .cmd-bar-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 42px !important;
+    padding: 0 12px !important;
+    font-size: 0.92rem !important;
+    border-radius: var(--btn-radius) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
+  .tyson-command-bar .cmd-bar-gear-btn {
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    border-radius: var(--btn-radius) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .tyson-command-bar .cmd-bar-gear-btn span {
+    display: none !important;
+  }
+
+  /* Fix Save Changes & Open Public Profile buttons inside identity strip */
+  .identity-strip > .topbar-actions,
+  .header-identity-row > .topbar-right {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100%;
+  }
+
+  .identity-strip > .topbar-actions .btn,
+  .header-identity-row > .topbar-right .top-btn {
+    flex: 1 1 140px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.56rem 0.9rem !important;
+    font-size: 0.92rem !important;
+    border-radius: 12px !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 640px) {
   .brand-tmg-domain,
   .tmg-domain-text,
   .domain-centerpiece-title,
@@ -1754,16 +1827,6 @@ body {
     font-size: 1.05rem;
   }
 
-  .identity-strip > .topbar-actions,
-  .header-identity-row > .topbar-right {
-    flex-direction: column;
-  }
-
-  .identity-strip > .topbar-actions .btn,
-  .header-identity-row > .topbar-right .top-btn {
-    width: 100%;
-  }
-
   .profile-tabs {
     margin: 0 14px;
     gap: 1rem;
@@ -1812,6 +1875,9 @@ body {
   .action-row .btn,
   .action-row-group .btn {
     width: 100%;
+    height: auto;
+    padding: 0.62rem 1rem;
+    font-size: 0.96rem;
     text-align: center;
   }
 
@@ -1827,7 +1893,7 @@ body {
 
   .auth-center-wrap {
     padding: 18px 10px;
-    min-height: calc(100dvh - 64px);
+    min-height: calc(100dvh - 140px);
   }
 
   .auth-box {

@@ -411,6 +411,86 @@
         applyTheme(this.getAttribute('data-set-theme'));
       });
     }
+
+    initMobileCommandBar(openDrawer);
+  }
+
+  function clearSession() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    setSharedCookie('mytyson_sso', '', -1);
+  }
+
+  function initMobileCommandBar(openDrawerFn) {
+    if (!document.body) return;
+    var bar = document.getElementById('tysonMobileCommandBar');
+    if (!bar) {
+      bar = document.createElement('nav');
+      bar.className = 'tyson-command-bar';
+      bar.id = 'tysonMobileCommandBar';
+      bar.setAttribute('aria-label', 'Mobile Command Bar');
+      bar.innerHTML =
+        '<a href="https://auth.my.tysonmediagroup.org" class="btn btn-primary cmd-bar-btn" id="cmdBarAuthBtn">Sign In</a>' +
+        '<a href="https://my.tysonmediagroup.org" class="btn cmd-bar-btn" id="cmdBarProfileBtn">Public Profile</a>' +
+        '<button type="button" class="settings-toggle-btn cmd-bar-gear-btn" id="cmdBarSettingsBtn" title="Theme &amp; Appearance Settings" aria-label="Settings">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<circle cx="12" cy="12" r="3"></circle>' +
+            '<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>' +
+          '</svg>' +
+        '</button>';
+      document.body.appendChild(bar);
+    }
+
+    var cmdGear = document.getElementById('cmdBarSettingsBtn');
+    if (cmdGear) {
+      cmdGear.addEventListener('click', function () {
+        var drawer = document.getElementById('settings-drawer');
+        var topGear = document.getElementById('settings-toggle-btn');
+        if (drawer && typeof openDrawerFn === 'function') {
+          openDrawerFn();
+        } else if (topGear) {
+          topGear.click();
+        }
+      });
+    }
+
+    var authBtn = document.getElementById('cmdBarAuthBtn');
+    var profBtn = document.getElementById('cmdBarProfileBtn');
+    var session = getSession();
+    var authBase = getAuthBaseUrl();
+    var dashBase = getDashboardBaseUrl();
+    var pageSlug = getPageSlug();
+    var returnUrl = window.location.href.split('?')[0];
+
+    if (authBtn) {
+      if (session && session.slug) {
+        authBtn.textContent = 'Sign Out (' + session.slug + ')';
+        authBtn.href = '#';
+        authBtn.onclick = function (e) {
+          e.preventDefault();
+          clearSession();
+          window.location.href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=tmg';
+        };
+      } else {
+        authBtn.textContent = 'Sign In';
+        authBtn.href = authBase + '?redirect=' + encodeURIComponent(returnUrl) + '&app=tmg';
+        authBtn.onclick = null;
+      }
+    }
+
+    if (profBtn) {
+      if (session && session.slug) {
+        profBtn.href = '/' + encodeURIComponent(session.slug);
+        profBtn.textContent = 'Public Profile';
+      } else if (pageSlug) {
+        profBtn.href = dashBase + '?user=' + encodeURIComponent(pageSlug);
+        profBtn.textContent = 'myTYSON Profile';
+      } else {
+        profBtn.href = dashBase;
+        profBtn.textContent = 'Public Profile';
+      }
+    }
   }
 
   document.addEventListener('DOMContentLoaded', function () {
