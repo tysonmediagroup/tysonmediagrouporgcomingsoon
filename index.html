@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="TYSON Media Group — 12/19/26.">
   <title>TYSON Media Group — 12/19/26</title>
   <link rel="icon" type="image/png" href="/assets/tysonmediagroup-icon.png">
   <link rel="apple-touch-icon" href="/assets/tysonmediagroup-icon.png">
+  <link rel="preload" as="image" href="assets/backdrops/backdrop-1.avif" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
@@ -28,30 +30,89 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* Fullscreen Cinematic Canvas */
-    canvas#stage {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
+    main.stage-shell {
+      position: relative;
       width: 100%;
       height: 100%;
+      min-height: 100dvh;
+      overflow: hidden;
       background: #000000;
-      z-index: 1;
+    }
+
+    /* Crossfading Wallpaper Backdrop Layer */
+    .backdrop-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+      transition: opacity 3.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .backdrop-stage.visible {
+      opacity: 1;
+    }
+
+    .backdrop-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transform: scale(1);
+      filter: brightness(0.76) contrast(1.05) saturate(0.95);
+      will-change: opacity, transform;
+    }
+
+    .backdrop-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 47%, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.56) 62%, rgba(0, 0, 0, 0.88) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.12) 45%, rgba(0, 0, 0, 0.68) 100%);
+    }
+
+    /* Fullscreen Cinematic Transparent Canvas (Screen blend matches optical star optics) */
+    canvas#stage {
+      display: block;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      mix-blend-mode: screen;
+      z-index: 4;
+      cursor: default;
+    }
+
+    .end-fade-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      background: #000000;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* Initial "Click Anywhere" Gate */
     .enter-gate {
-      position: absolute;
+      position: fixed;
       inset: 0;
       background: #000000;
+      border: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 10;
+      gap: 14px;
+      z-index: 30;
       cursor: pointer;
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.9s;
     }
 
     .enter-gate.dismissed {
@@ -64,453 +125,548 @@
       font-size: 11px;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: #666666;
+      color: #777777;
       transition: color 0.3s ease;
       animation: pulsePrompt 2.6s ease-in-out infinite;
     }
 
-    .enter-gate:hover .enter-prompt {
+    .enter-gate:hover .enter-prompt,
+    .enter-gate:focus-visible .enter-prompt {
       color: #ffffff;
     }
 
     @keyframes pulsePrompt {
-      0%, 100% { opacity: 0.35; transform: scale(0.99); }
-      50% { opacity: 0.9; transform: scale(1.0); }
-    }
-
-    /* Minimal Discrete Audio Indicator (Bottom Corner) */
-    .audio-indicator {
-      position: absolute;
-      bottom: 24px;
-      right: 28px;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      opacity: 0;
-      transition: opacity 1s ease;
-      cursor: pointer;
-    }
-
-    .audio-indicator.visible {
-      opacity: 0.35;
-    }
-
-    .audio-indicator:hover {
-      opacity: 0.9;
-    }
-
-    .eq-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 12px;
-    }
-
-    .eq-bar {
-      width: 2px;
-      background: #ffffff;
-      height: 4px;
-      border-radius: 1px;
-    }
-
-    .audio-indicator.playing .eq-bar:nth-child(1) { animation: eq 0.8s ease-in-out infinite alternate; }
-    .audio-indicator.playing .eq-bar:nth-child(2) { animation: eq 1.1s ease-in-out 0.2s infinite alternate; }
-    .audio-indicator.playing .eq-bar:nth-child(3) { animation: eq 0.9s ease-in-out 0.4s infinite alternate; }
-    .audio-indicator.playing .eq-bar:nth-child(4) { animation: eq 1.3s ease-in-out 0.1s infinite alternate; }
-
-    @keyframes eq {
-      0% { height: 2px; }
-      100% { height: 12px; }
-    }
-
-    .audio-track-label {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #ffffff;
+      0%, 100% { opacity: 0.38; transform: scale(0.99); }
+      50% { opacity: 0.95; transform: scale(1.0); }
     }
   </style>
 </head>
 <body>
-
-  <!-- Fullscreen Rendering Canvas -->
-  <canvas id="stage"></canvas>
-
-  <!-- Click Anywhere Gate to Allow Browser Autoplay -->
-  <div class="enter-gate" id="enterGate" onclick="startExperience()">
-    <div class="enter-prompt">[ Click Anywhere to Enter ]</div>
-  </div>
-
-  <!-- Ambient Audio Indicator in Corner -->
-  <div class="audio-indicator" id="audioIndicator" onclick="toggleAudio()">
-    <div class="eq-bars">
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
-      <div class="eq-bar"></div>
+  <main class="stage-shell">
+    <!-- Crossfading Backdrop Wallpapers -->
+    <div class="backdrop-stage" id="backdropStage" aria-hidden="true">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-1.avif" alt="" width="1714" height="1161" fetchpriority="high" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-2.avif" alt="" width="2064" height="1161" fetchpriority="low" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-3.avif" alt="" width="2064" height="1161" fetchpriority="low" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-4.avif" alt="" width="2064" height="1161" fetchpriority="low" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-5.avif" alt="" width="2064" height="1161" fetchpriority="low" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-6.avif" alt="" width="2064" height="1161" fetchpriority="low" decoding="async">
+      <img class="backdrop-slide" src="assets/backdrops/backdrop-7.avif" alt="" width="1730" height="1161" fetchpriority="low" decoding="async">
+      <div class="backdrop-scrim"></div>
     </div>
-    <div class="audio-track-label" id="audioLabel">Whitesnake</div>
-  </div>
+
+    <!-- Transparent Foreground Canvas for Logo Write-On, Date & Shooting Stars -->
+    <canvas id="stage"></canvas>
+    <div class="end-fade-overlay" id="endFadeOverlay" aria-hidden="true"></div>
+
+    <!-- Initial Click Anywhere Gate -->
+    <button type="button" class="enter-gate" id="enterGate" aria-label="Enter TYSON Media Group Experience">
+      <span class="enter-prompt">[ Click Anywhere to Enter ]</span>
+    </button>
+  </main>
 
   <script>
-    const canvas = document.getElementById('stage');
-    const ctx = canvas.getContext('2d');
-    const enterGate = document.getElementById('enterGate');
-    const audioIndicator = document.getElementById('audioIndicator');
-    const audioLabel = document.getElementById('audioLabel');
+    (function () {
+      "use strict";
 
-    // Dedicated offscreen canvas for strictly clipped specular glint
-    const textCanvas = document.createElement('canvas');
-    const textCtx = textCanvas.getContext('2d');
+      const TRACK_URL = "audio/old-home-not-yet-built-instupendo-remix.mp3";
+      const DEFAULT_CLIP_DURATION = 38.64;
+      const DEFAULT_SWEEP_DURATION = 0.8;
+      const DEFAULT_LEAD_OFFSET = -0.14;
+      const DEFAULT_CUES = [
+        5.2, 6.63, 7.01, 7.69, 8.35, 9.27, 9.59, 10.72, 11.03, 12.11,
+        12.36, 13.12, 13.83, 14.11, 14.35, 14.71, 16.6, 17.59, 17.88, 18.57,
+        19.31, 20.27, 20.66, 21.69, 21.97, 22.77, 23.07, 23.4, 23.52, 24.67,
+        24.95, 25.2, 25.32, 25.51, 25.8, 27.94, 28.17, 28.33, 28.49, 28.66,
+        28.84, 29.02, 29.15, 29.27, 29.46, 30.96, 31.11, 31.27, 31.43, 31.6,
+        31.72, 31.9, 32.03, 32.17, 32.36, 32.49, 32.69, 32.82, 32.95, 33.82,
+        34.08, 34.24, 34.44, 34.57, 34.78, 34.92, 35.07, 35.22, 35.37, 36.55,
+        36.79, 36.92, 37.11, 37.32, 37.45, 37.64, 37.78, 37.97, 38.1, 38.3,
+        38.43, 38.57
+      ];
 
-    // Audio Engine
-    let audioCtx = null;
-    let audioElement = new Audio('audio.mp3');
-    audioElement.preload = 'auto';
-    audioElement.loop = true;
+      const STAGE_DUR = 12.88;
+      const FADE_DUR = 6.5;
+      const ZOOM_RATE = 0.0032;
 
-    let isStarted = false;
-    let isPlaying = false;
-    let currentTime = 0;
-    let lastAudioTime = 0;
-    let lastAudioTick = performance.now();
-    let animFrameId = null;
+      const canvas = document.getElementById("stage");
+      const ctx = canvas.getContext("2d");
+      const textCanvas = document.createElement("canvas");
+      const textCtx = textCanvas.getContext("2d");
 
-    // Responsive Canvas Resize
-    function resizeCanvas() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(window.innerWidth * dpr);
-      canvas.height = Math.round(window.innerHeight * dpr);
-      renderFrame(currentTime);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    document.fonts.ready.then(resizeCanvas);
+      const enterGate = document.getElementById("enterGate");
+      const backdropStage = document.getElementById("backdropStage");
+      const endFadeOverlay = document.getElementById("endFadeOverlay");
+      const slides = Array.from(document.querySelectorAll(".backdrop-slide"));
 
-    // Easing curves
-    function easeOutCubic(x) {
-      return 1 - Math.pow(1 - x, 3);
-    }
-    function easeInOutCubic(x) {
-      return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-    }
-    function easeInOutSine(x) {
-      return -(Math.cos(Math.PI * x) - 1) / 2;
-    }
+      const audioElement = new Audio(TRACK_URL);
+      audioElement.preload = "auto";
+      audioElement.loop = true;
 
-    // Start Experience on First Click
-    function startExperience() {
-      if (isStarted) return;
-      isStarted = true;
+      let audioCtx = null;
+      let isStarted = false;
+      let isPlaying = false;
+      let currentTime = 0;
+      let prevAudioTime = 0;
+      let lastAudioTime = 0;
+      let lastAudioTick = performance.now();
+      let backdropStartMs = performance.now();
+      let animFrameId = null;
 
-      enterGate.classList.add('dismissed');
-      audioIndicator.classList.add('visible', 'playing');
+      let clipDuration = DEFAULT_CLIP_DURATION;
+      let sweepDuration = DEFAULT_SWEEP_DURATION;
+      let leadOffset = DEFAULT_LEAD_OFFSET;
+      let starCues = DEFAULT_CUES.slice();
+      let activeSweeps = [];
+      const engineStartMs = performance.now();
 
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      function easeOutCubic(x) {
+        return 1 - Math.pow(1 - x, 3);
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
+
+      function easeInOutCubic(x) {
+        return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
       }
 
-      audioElement.currentTime = 0;
-      audioElement.play().catch(e => console.log('Audio autoplay policy fallback', e));
-
-      isPlaying = true;
-      lastAudioTime = 0;
-      lastAudioTick = performance.now();
-      animFrameId = requestAnimationFrame(loop);
-    }
-
-    // Toggle Audio Pause/Play
-    function toggleAudio() {
-      if (!isStarted) return;
-      if (audioElement.paused) {
-        audioElement.play();
-        isPlaying = true;
-        audioIndicator.classList.add('playing');
-        audioLabel.textContent = 'Whitesnake';
-      } else {
-        audioElement.pause();
-        audioIndicator.classList.remove('playing');
-        audioLabel.textContent = 'Paused';
-      }
-    }
-
-    // Phase-Locked Render Loop
-    function loop() {
-      const now = performance.now();
-
-      if (audioElement && !audioElement.paused) {
-        const aTime = audioElement.currentTime;
-        if (aTime !== lastAudioTime) {
-          lastAudioTime = aTime;
-          lastAudioTick = now;
-          currentTime = aTime;
+      function hslToRgb(h, s, l) {
+        h = h / 360;
+        let r, g, b;
+        if (s === 0) {
+          r = g = b = l;
         } else {
-          currentTime = lastAudioTime + (now - lastAudioTick) / 1000;
+          const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+          };
+          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          const p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1 / 3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1 / 3);
         }
-      } else if (isPlaying) {
-        currentTime += 0.016;
+        return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
       }
 
-      renderFrame(currentTime);
-      animFrameId = requestAnimationFrame(loop);
-    }
-
-    // ==========================================
-    // IMMERSIVE WEB LANDING ENGINE
-    // 0.0s - 1.0s: Song's initial ambient silence (pure black)
-    // 1.0s - 3.7s: tysonmediagroup.org writes on left-to-right
-    // 3.7s: First chord shine sweeps through logo
-    // 7.0s: 12/19/26 reveals at bottom and stays anchored
-    // >7.0s: Logo stays in center, 12/19 on bottom, periodic specular shines
-    // ==========================================
-    function renderFrame(t) {
-      const w = canvas.width;
-      const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
-
-      // 100% Pitch Black Void
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, w, h);
-
-      if (t < 1.0) {
-        return; // Blank before first note
+      function getColorshiftRGB(elapsedSec) {
+        const hue = (elapsedSec * 30) % 360;
+        return hslToRgb(hue, 0.45, 0.75);
       }
 
-      // ----------------------------------------------------
-      // 1. CENTER LOGO: tysonmediagroup.org
-      // FONT: Cormorant Garamond, Italic, Thin (Weight 300)
-      // ----------------------------------------------------
-      if (textCanvas.width !== w || textCanvas.height !== h) {
-        textCanvas.width = w;
-        textCanvas.height = h;
-      }
-      textCtx.clearRect(0, 0, w, h);
-
-      // Responsive font sizing: adaptive to mobile & widescreen
-      const isMobile = w < h;
-      const baseRatio = isMobile ? 0.088 : 0.068;
-      const fontSize = Math.max(28, Math.min(150, Math.round(w * baseRatio)));
-
-      textCtx.font = `italic 300 ${fontSize}px "Cormorant Garamond", Georgia, serif`;
-      textCtx.textAlign = 'center';
-      textCtx.textBaseline = 'middle';
-
-      const logoText = "tysonmediagroup.org";
-      const metrics = textCtx.measureText(logoText);
-      const textWidth = metrics.width;
-
-      const textStartX = cx - textWidth / 2;
-      const textEndX = cx + textWidth / 2;
-
-      // Visual vertical center (slightly elevated to balance with bottom date)
-      const logoY = cy - (h * 0.035);
-
-      // --------------------------------------------------
-      // WRITE-ON PHASE: 1.0s to 3.7s (Initial Opening)
-      // --------------------------------------------------
-      const traceStart = 1.0;
-      const traceEnd = 3.7;
-
-      if (t < traceEnd) {
-        const rawTrace = Math.min(1.0, Math.max(0, (t - traceStart) / (traceEnd - traceStart)));
-        const easedTrace = easeOutCubic(rawTrace);
-
-        // Immediate strike at 1.000s
-        const feather = 24;
-        const currentHeadX = textStartX + (textEndX - textStartX + 20) * easedTrace;
-
-        // Draw solid text
-        textCtx.save();
-        textCtx.fillStyle = '#ffffff';
-        textCtx.fillText(logoText, cx, logoY);
-
-        // Progressive wipe mask
-        textCtx.globalCompositeOperation = 'destination-in';
-        const maskGrad = textCtx.createLinearGradient(0, logoY, w, logoY);
-        const pStart = Math.max(0, Math.min(1, (currentHeadX - feather) / w));
-        const pEnd = Math.max(0, Math.min(1, currentHeadX / w));
-
-        maskGrad.addColorStop(0, 'rgba(0, 0, 0, 1)');
-        maskGrad.addColorStop(pStart, 'rgba(0, 0, 0, 1)');
-        maskGrad.addColorStop(pEnd, 'rgba(0, 0, 0, 0)');
-        maskGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-        textCtx.fillStyle = maskGrad;
-        textCtx.fillRect(0, 0, w, h);
-        textCtx.restore();
-
-        // Baseline Spark during initial write-on
-        if (currentHeadX >= textStartX && currentHeadX <= textEndX + 20) {
-          const baselineY = logoY + fontSize * 0.28;
-          const sparkX = Math.min(textEndX, currentHeadX);
-
-          ctx.save();
-          ctx.globalCompositeOperation = 'screen';
-          const sparkAlpha = Math.sin(rawTrace * Math.PI) * 0.85;
-
-          const raySpan = fontSize * 1.4;
-          const rayGrad = ctx.createLinearGradient(sparkX - raySpan, baselineY, sparkX + raySpan, baselineY);
-          rayGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-          rayGrad.addColorStop(0.5, `rgba(255, 255, 255, ${sparkAlpha})`);
-          rayGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-          ctx.fillStyle = rayGrad;
-          ctx.fillRect(sparkX - raySpan, baselineY - 1, raySpan * 2, 2);
-
-          const orb = ctx.createRadialGradient(sparkX, baselineY, 0, sparkX, baselineY, 12);
-          orb.addColorStop(0, `rgba(255, 255, 255, ${sparkAlpha})`);
-          orb.addColorStop(0.5, `rgba(255, 255, 255, ${sparkAlpha * 0.3})`);
-          orb.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          ctx.fillStyle = orb;
-          ctx.beginPath();
-          ctx.arc(sparkX, baselineY, 12, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.restore();
-        }
-
-      } else {
-        // Logo is fully revealed and stays permanently on screen
-        textCtx.fillStyle = '#ffffff';
-        textCtx.fillText(logoText, cx, logoY);
-
-        // --------------------------------------------------
-        // SPECULAR SHINE ENGINE (LOOPING)
-        // 1st shine: 3.7s - 6.6s (Chord 2)
-        // Subsequent shines: Every ~9.5s across the whole song!
-        // --------------------------------------------------
-        let isShining = false;
-        let shineProgress = 0;
-
-        if (t >= 3.7 && t <= 6.6) {
-          isShining = true;
-          shineProgress = easeInOutCubic((t - 3.7) / (6.6 - 3.7));
-        } else if (t > 7.5) {
-          const loopPeriod = 9.5;
-          const cycleTime = (t - 7.5) % loopPeriod;
-          const shineDuration = 3.0;
-
-          if (cycleTime < shineDuration) {
-            isShining = true;
-            shineProgress = easeInOutCubic(cycleTime / shineDuration);
+      async function loadCueManifest() {
+        try {
+          const res = await fetch("star-cues.json", { cache: "no-store" });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data?.cues) && data.cues.length > 0) {
+            starCues = data.cues.map(Number).filter((n) => Number.isFinite(n) && n >= 0);
+            starCues.sort((a, b) => a - b);
           }
-        }
+          if (typeof data?.duration === "number" && data.duration > 5) {
+            clipDuration = data.duration;
+          }
+          if (typeof data?.sweepDuration === "number" && data.sweepDuration > 0.1) {
+            sweepDuration = data.sweepDuration;
+          }
+          if (typeof data?.leadOffset === "number" && Number.isFinite(data.leadOffset)) {
+            leadOffset = data.leadOffset;
+          }
+        } catch (_) {}
+      }
 
-        if (isShining) {
-          const startX = cx - textWidth * 0.65;
-          const endX = cx + textWidth * 0.65;
-          const sweepX = startX + (endX - startX) * shineProgress;
+      function initBackdropSlideZero() {
+        slides.forEach((img, idx) => {
+          if (idx === 0) {
+            img.style.zIndex = "2";
+            img.style.opacity = "1";
+            img.style.transform = "scale(1)";
+          } else {
+            img.style.zIndex = "0";
+            img.style.opacity = "0";
+            img.style.transform = "scale(1)";
+          }
+        });
+      }
 
-          // 1. Internal Chrome Slant Gleam (100% strictly inside letters)
-          textCtx.save();
-          textCtx.globalCompositeOperation = 'source-atop';
+      function syncBackdrops(nowMs) {
+        if (!slides.length) return;
+        const elapsed = Math.max(0, (nowMs - backdropStartMs) / 1000);
+        const slot = Math.floor(elapsed / STAGE_DUR);
+        const localT = elapsed - slot * STAGE_DUR;
+        const currIdx = slot % slides.length;
+        const prevIdx = (slot - 1 + slides.length) % slides.length;
+        const inCrossfade = slot > 0 && localT < FADE_DUR;
+        const fadeAlpha = inCrossfade ? easeInOutCubic(localT / FADE_DUR) : 1;
 
-          const slantOffset = fontSize * 0.42;
-          const beamWidth = fontSize * 1.1;
-
-          const shineGrad = textCtx.createLinearGradient(
-            sweepX - beamWidth - slantOffset, logoY + fontSize * 0.6,
-            sweepX + beamWidth + slantOffset, logoY - fontSize * 0.6
-          );
-
-          shineGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-          shineGrad.addColorStop(0.35, 'rgba(255, 255, 255, 0.08)');
-          shineGrad.addColorStop(0.48, 'rgba(255, 255, 255, 0.85)');
-          shineGrad.addColorStop(0.50, 'rgba(255, 255, 255, 1.0)');
-          shineGrad.addColorStop(0.52, 'rgba(255, 255, 255, 0.85)');
-          shineGrad.addColorStop(0.65, 'rgba(255, 255, 255, 0.08)');
-          shineGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-          textCtx.fillStyle = shineGrad;
-          textCtx.fillRect(0, 0, w, h);
-          textCtx.restore();
-
-          // 2. Parallel Baseline Specular Glow Streak
-          const glintAlpha = Math.sin(shineProgress * Math.PI) * 0.95;
-          if (glintAlpha > 0.02) {
-            const baselineY = logoY + fontSize * 0.28;
-            const streakSpan = fontSize * 2.8;
-
-            ctx.save();
-            ctx.globalCompositeOperation = 'screen';
-
-            const parallelGleam = ctx.createLinearGradient(
-              sweepX - streakSpan, baselineY,
-              sweepX + streakSpan, baselineY
-            );
-            parallelGleam.addColorStop(0, 'rgba(255, 255, 255, 0)');
-            parallelGleam.addColorStop(0.4, `rgba(255, 255, 255, ${glintAlpha * 0.3})`);
-            parallelGleam.addColorStop(0.5, `rgba(255, 255, 255, ${glintAlpha * 0.95})`);
-            parallelGleam.addColorStop(0.6, `rgba(255, 255, 255, ${glintAlpha * 0.3})`);
-            parallelGleam.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-            ctx.fillStyle = parallelGleam;
-            ctx.fillRect(sweepX - streakSpan, baselineY - 1, streakSpan * 2, 2);
-
-            const orb = ctx.createRadialGradient(sweepX, baselineY, 0, sweepX, baselineY, 18);
-            orb.addColorStop(0, `rgba(255, 255, 255, ${glintAlpha})`);
-            orb.addColorStop(0.4, `rgba(255, 255, 255, ${glintAlpha * 0.3})`);
-            orb.addColorStop(1, 'rgba(255, 255, 255, 0)');
-            ctx.fillStyle = orb;
-            ctx.beginPath();
-            ctx.arc(sweepX, baselineY, 18, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.restore();
+        for (let i = 0; i < slides.length; i++) {
+          const img = slides[i];
+          if (i === currIdx) {
+            img.style.zIndex = "2";
+            img.style.opacity = fadeAlpha.toFixed(4);
+            img.style.transform = `scale(${(1 + ZOOM_RATE * localT).toFixed(6)})`;
+          } else if (inCrossfade && i === prevIdx) {
+            img.style.zIndex = "1";
+            img.style.opacity = "1";
+            img.style.transform = `scale(${(1 + ZOOM_RATE * (STAGE_DUR + localT)).toFixed(6)})`;
+          } else {
+            if (img.style.opacity !== "0") img.style.opacity = "0";
+            if (img.style.zIndex !== "0") img.style.zIndex = "0";
           }
         }
       }
 
-      // Paint text buffer onto main stage
-      ctx.drawImage(textCanvas, 0, 0);
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        renderFrame(currentTime, performance.now());
+      }
+      window.addEventListener("resize", resizeCanvas);
+      document.fonts.ready.then(resizeCanvas);
 
-      // ----------------------------------------------------
-      // 2. BOTTOM DATE: 12/19/26
-      // Fades in at 7.0s (timed to chord/bass swell)
-      // Stays permanently anchored on the bottom of the viewport
-      // ----------------------------------------------------
-      if (t >= 6.8) {
-        const dateAlpha = Math.min(1.0, (t - 6.8) / 1.0);
+      function spawnStarSweep(nowMs) {
+        activeSweeps.push({
+          wallStartMs: typeof nowMs === "number" ? nowMs : performance.now(),
+          duration: sweepDuration
+        });
+      }
+
+      function startExperience() {
+        if (isStarted) return;
+        isStarted = true;
+
+        enterGate.classList.add("dismissed");
+        backdropStage.classList.add("visible");
+
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+
+        const nowMs = performance.now();
+        audioElement.currentTime = 0;
+        audioElement.volume = 1;
+        prevAudioTime = 0;
+        lastAudioTime = 0;
+        currentTime = 0;
+        lastAudioTick = nowMs;
+        backdropStartMs = nowMs;
+        isPlaying = true;
+        syncBackdrops(nowMs);
+        audioElement.play().catch((e) => console.log("Audio autoplay fallback", e));
+
+        if (!animFrameId) {
+          animFrameId = requestAnimationFrame(loop);
+        }
+      }
+
+      function toggleAudio(forcePlay) {
+        if (!isStarted) return;
+        const shouldPlay = typeof forcePlay === "boolean" ? forcePlay : audioElement.paused;
+
+        if (shouldPlay) {
+          audioElement.play().catch(() => {});
+          isPlaying = true;
+          lastAudioTime = audioElement.currentTime;
+          prevAudioTime = audioElement.currentTime;
+          lastAudioTick = performance.now();
+        } else {
+          audioElement.pause();
+          isPlaying = false;
+        }
+      }
+
+      function scheduleCueTriggers(prevT, currT, nowMs) {
+        if (audioElement.paused || !isPlaying || starCues.length === 0) return;
+        const dur = clipDuration;
+        const looped = currT < prevT - 1.0;
+
+        for (const rawCue of starCues) {
+          const eff = Math.max(0.05, rawCue + leadOffset);
+          const hit = looped
+            ? ((eff > prevT && eff <= dur) || (eff >= 0 && eff <= currT))
+            : (eff > prevT && eff <= currT);
+          if (hit) {
+            spawnStarSweep(nowMs);
+          }
+        }
+      }
+
+      function loop(now) {
+        if (document.hidden) {
+          animFrameId = null;
+          return;
+        }
+
+        if (audioElement && !audioElement.paused) {
+          const aTime = audioElement.currentTime;
+          if (aTime !== lastAudioTime) {
+            lastAudioTime = aTime;
+            lastAudioTick = now;
+            currentTime = aTime;
+          } else {
+            currentTime = lastAudioTime + (now - lastAudioTick) / 1000;
+          }
+
+          if (currentTime >= clipDuration) {
+            audioElement.currentTime = 0;
+            audioElement.volume = 1;
+            currentTime = 0;
+            lastAudioTime = 0;
+            prevAudioTime = 0;
+            lastAudioTick = now;
+            activeSweeps = [];
+            endFadeOverlay.style.opacity = "0";
+          } else {
+            scheduleCueTriggers(prevAudioTime, currentTime, now);
+            prevAudioTime = currentTime;
+            if (currentTime > clipDuration - 1.50) {
+              const p = Math.min(1, Math.max(0, (currentTime - (clipDuration - 1.50)) / 1.50));
+              endFadeOverlay.style.opacity = String(Math.pow(p, 1.8));
+              audioElement.volume = Math.max(0, 1 - Math.pow(p, 1.6));
+            } else {
+              if (endFadeOverlay.style.opacity !== "0") endFadeOverlay.style.opacity = "0";
+              if (audioElement.volume !== 1) audioElement.volume = 1;
+            }
+          }
+        }
+
+        if (isStarted) {
+          syncBackdrops(now);
+        }
+
+        renderFrame(currentTime, now);
+        animFrameId = requestAnimationFrame(loop);
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          if (animFrameId) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
+          }
+        } else if (isStarted && !animFrameId) {
+          lastAudioTick = performance.now();
+          lastAudioTime = audioElement.currentTime;
+          prevAudioTime = audioElement.currentTime;
+          animFrameId = requestAnimationFrame(loop);
+        }
+      });
+
+      function drawOpticalStar(sweepX, baselineY, fontSize, glintAlpha, rgb, dpr) {
+        if (glintAlpha <= 0.02) return;
+        const streakWidth = fontSize * 2.2;
+        const beamThickness = Math.max(2, Math.round(1.5 * dpr));
+        const orbRadius = 4.5 * (fontSize / 36);
 
         ctx.save();
-        const dateBottomY = h - Math.max(40, h * 0.12);
+        ctx.globalCompositeOperation = "screen";
 
-        // Thin elegant hairline divider above the bottom date
-        const lineWidth = Math.min(160, w * 0.15);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${dateAlpha * 0.25})`;
-        ctx.lineWidth = 1;
+        // 1. Horizontal Ray Beam (Exact 1:1 brand-framework.js stops)
+        const rayGrad = ctx.createLinearGradient(
+          sweepX - streakWidth, baselineY,
+          sweepX + streakWidth, baselineY
+        );
+        rayGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+        rayGrad.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${glintAlpha * 0.3})`);
+        rayGrad.addColorStop(0.5, `rgba(255, 255, 255, ${glintAlpha * 0.95})`);
+        rayGrad.addColorStop(0.6, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${glintAlpha * 0.3})`);
+        rayGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+
+        ctx.fillStyle = rayGrad;
+        ctx.fillRect(sweepX - streakWidth, baselineY - beamThickness * 0.5, streakWidth * 2, beamThickness);
+
+        // 2. Specular Star Pinpoint Orb (Exact 1:1 brand-framework.js stops)
+        const orb = ctx.createRadialGradient(sweepX, baselineY, 0, sweepX, baselineY, orbRadius);
+        orb.addColorStop(0, `rgba(255, 255, 255, ${glintAlpha})`);
+        orb.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${glintAlpha * 0.35})`);
+        orb.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+        ctx.fillStyle = orb;
         ctx.beginPath();
-        ctx.moveTo(cx - lineWidth / 2, dateBottomY - 26);
-        ctx.lineTo(cx + lineWidth / 2, dateBottomY - 26);
-        ctx.stroke();
-
-        // Upright, non-italic Cormorant Garamond 12/19/26
-        const dateFontSize = Math.max(16, Math.min(42, Math.round(fontSize * 0.38)));
-        ctx.font = `normal 400 ${dateFontSize}px "Cormorant Garamond", Georgia, serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${dateAlpha * 0.95})`;
-        ctx.fillText("12/19/26", cx, dateBottomY);
+        ctx.arc(sweepX, baselineY, orbRadius, 0, Math.PI * 2);
+        ctx.fill();
 
         ctx.restore();
       }
-    }
 
-    // Dismiss gate on keyboard Space / Enter as well
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' || e.code === 'Enter') {
+      function renderFrame(t, nowMs) {
+        const now = typeof nowMs === "number" ? nowMs : performance.now();
+        const elapsedSec = (now - engineStartMs) / 1000;
+        const rgb = getColorshiftRGB(elapsedSec);
+        const w = canvas.width;
+        const h = canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        ctx.clearRect(0, 0, w, h);
+
+        if (textCanvas.width !== w || textCanvas.height !== h) {
+          textCanvas.width = w;
+          textCanvas.height = h;
+        }
+        textCtx.clearRect(0, 0, w, h);
+
+        const logoText = "tysonmediagroup.org";
+        textCtx.font = 'italic 300 100px "Cormorant Garamond", Georgia, serif';
+        const sampleWidth = textCtx.measureText(logoText).width || 800;
+        const widthPerPx = sampleWidth / 100;
+        const isMobile = w < h;
+        const targetWidth = w * (isMobile ? 0.88 : 0.78);
+        let fontSize = Math.round(targetWidth / widthPerPx);
+        fontSize = Math.min(fontSize, Math.round(h * 0.42));
+        fontSize = Math.max(Math.round(36 * dpr), Math.min(Math.round(135 * dpr), fontSize));
+
+        // ----------------------------------------------------
+        // 1. INTRO CENTER DATE: 12/19/26 (0.15s - 3.00s)
+        // ----------------------------------------------------
+        if (t >= 0.15 && t <= 3.0) {
+          let dateAlpha = 0;
+          if (t < 1.1) {
+            dateAlpha = easeInOutCubic((t - 0.15) / (1.1 - 0.15));
+          } else if (t <= 2.0) {
+            dateAlpha = 1.0;
+          } else {
+            dateAlpha = 1.0 - easeInOutCubic((t - 2.0) / (3.0 - 2.0));
+          }
+
+          if (dateAlpha > 0.005) {
+            ctx.save();
+            const dateFontSize = Math.max(Math.round(24 * dpr), Math.round(fontSize * 0.54));
+            ctx.font = `normal 400 ${dateFontSize}px "Cormorant Garamond", Georgia, serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = `rgba(255, 255, 255, ${dateAlpha * 0.96})`;
+            ctx.fillText("12/19/26", cx, cy);
+            ctx.restore();
+          }
+        }
+
+        // ----------------------------------------------------
+        // 2. CENTER WORDMARK: tysonmediagroup.org (3.05s - 4.95s write-on, >=4.95s held)
+        // ----------------------------------------------------
+        textCtx.font = `italic 300 ${fontSize}px "Cormorant Garamond", Georgia, serif`;
+        textCtx.textAlign = "center";
+        textCtx.textBaseline = "middle";
+
+        const metrics = textCtx.measureText(logoText);
+        const textWidth = metrics.width;
+        const textStartX = cx - textWidth / 2;
+        const textEndX = cx + textWidth / 2;
+        const logoY = cy;
+        const baselineY = logoY + fontSize * 0.26;
+
+        const traceStart = 3.05;
+        const traceEnd = 4.95;
+
+        if (t >= traceStart && t < traceEnd) {
+          const rawTrace = Math.min(1.0, Math.max(0, (t - traceStart) / (traceEnd - traceStart)));
+          const easedTrace = easeOutCubic(rawTrace);
+          const feather = 24 * dpr;
+          const currentHeadX = textStartX + (textEndX - textStartX + 20 * dpr) * easedTrace;
+
+          textCtx.save();
+          textCtx.fillStyle = "#FFFFFF";
+          textCtx.fillText(logoText, cx, logoY);
+
+          textCtx.globalCompositeOperation = "destination-in";
+          const maskGrad = textCtx.createLinearGradient(0, logoY, w, logoY);
+          const pStart = Math.max(0, Math.min(1, (currentHeadX - feather) / w));
+          const pEnd = Math.max(0, Math.min(1, currentHeadX / w));
+          maskGrad.addColorStop(0, "rgba(0, 0, 0, 1)");
+          maskGrad.addColorStop(pStart, "rgba(0, 0, 0, 1)");
+          maskGrad.addColorStop(pEnd, "rgba(0, 0, 0, 0)");
+          maskGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+          textCtx.fillStyle = maskGrad;
+          textCtx.fillRect(0, 0, w, h);
+          textCtx.restore();
+
+          if (currentHeadX >= textStartX && currentHeadX <= textEndX + 20 * dpr) {
+            const sparkX = Math.min(textEndX, currentHeadX);
+            const sparkAlpha = Math.sin(rawTrace * Math.PI) * 0.85;
+            drawOpticalStar(sparkX, baselineY, fontSize * 0.65, sparkAlpha, rgb, dpr);
+          }
+        } else if (t >= traceEnd) {
+          textCtx.fillStyle = "#FFFFFF";
+          textCtx.fillText(logoText, cx, logoY);
+        }
+
+        // Prune completed star sweeps
+        activeSweeps = activeSweeps.filter((s) => ((now - s.wallStartMs) / 1000) <= s.duration);
+
+        // Apply active sweeps both inside text strokes and along baseline using 1:1 brand-framework optics
+        for (const sweep of activeSweeps) {
+          const rawP = Math.max(0, Math.min(1, ((now - sweep.wallStartMs) / 1000) / sweep.duration));
+          const progress = easeInOutCubic(rawP);
+          const startX = cx - textWidth * 0.65;
+          const endX = cx + textWidth * 0.65;
+          const sweepX = startX + (endX - startX) * progress;
+          const glintAlpha = Math.sin(progress * Math.PI) * 0.95;
+
+          if (t >= traceStart) {
+            textCtx.save();
+            textCtx.globalCompositeOperation = "source-atop";
+            const slantOffset = fontSize * 0.45;
+            const beamSpan = fontSize * 1.8;
+            const shineGrad = textCtx.createLinearGradient(
+              sweepX - beamSpan - slantOffset, logoY + fontSize * 0.6,
+              sweepX + beamSpan + slantOffset, logoY - fontSize * 0.6
+            );
+            shineGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+            shineGrad.addColorStop(0.30, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
+            shineGrad.addColorStop(0.46, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.45)`);
+            shineGrad.addColorStop(0.50, "rgba(255, 255, 255, 0.95)");
+            shineGrad.addColorStop(0.54, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.45)`);
+            shineGrad.addColorStop(0.70, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
+            shineGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+            textCtx.fillStyle = shineGrad;
+            textCtx.fillRect(0, 0, w, h);
+            textCtx.restore();
+          }
+
+          drawOpticalStar(sweepX, baselineY, fontSize, glintAlpha, rgb, dpr);
+        }
+
+        // Composite pure white wordmark + gleam directly without dark shadow smearing
+        ctx.drawImage(textCanvas, 0, 0);
+      }
+
+      enterGate.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startExperience();
+      });
+
+      window.addEventListener("keydown", (e) => {
         if (!isStarted) {
-          startExperience();
-        } else {
+          if (e.code === "Enter" || e.code === "Space") {
+            e.preventDefault();
+            if (!e.repeat) startExperience();
+          }
+          return;
+        }
+
+        if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+
+        const key = e.key.toLowerCase();
+        if (key === "s") {
+          e.preventDefault();
+          spawnStarSweep(performance.now());
+        } else if (key === "p") {
+          e.preventDefault();
           toggleAudio();
         }
-      }
-    });
+      });
+
+      initBackdropSlideZero();
+      loadCueManifest();
+      resizeCanvas();
+    })();
   </script>
 </body>
 </html>
